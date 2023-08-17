@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+
+.blockInset {
+    border: 1px solid #46526e;
+    background-color: #a0aec0;
+    background-size: cover;
+    box-shadow: 0px 1px 2px rgba(0,0,0,0.2), inset 0px 4px 9px rgba(0,0,0,0.6);
+}
+
+.myinput {
+    min-width: 36px;
+    padding: 0px 4px;
+    border: 1px solid #666666;
+    border-radius: 4px;
+    background-color: #ffffff;
+    background-size: cover;
+    font-family: Arial;
+    font-size: 13px;
+    color: #121212;
+    text-decoration: rgb(18, 18, 18);
+    text-align: center;
+    box-shadow: inset 0px 1px 2px rgba(0,0,0,0.2);
+}
+
+.btn-blue {
+    @apply bg-blue-500 text-white font-bold m-1 py-2 px-4 rounded
+}
+
+.btn-orange {
+    @apply bg-runOrange text-black m-1 py-2 px-4 rounded
+}
+
+.btn-orange:hover {
+    @apply bg-orange-300
+}
+
+.btn-orange:disabled {
+    @apply bg-orange-500 opacity-50 cursor-default
+}
+
+.btn-instructions { @apply bg-white text-left flex w-full h-12 justify-between text-fiord text-sm items-center my-1 pl-3 }
+.btn-instructions:hover { @apply bg-mildGrey }
+.btn-instructions:disabled { @apply bg-mildGrey cursor-default opacity-50 text-black }
+
+.inner-shadow-lg {
+    box-shadow: inset 0px 2px 6px rgba(0,0,0,0.1);
+}
+
+.btn-blue:hover {
+    @apply bg-blue-700
+}
+
+.btn-blue:disabled {
+    @apply bg-blue-200 cursor-default
+}
+
+@tailwind utilities;

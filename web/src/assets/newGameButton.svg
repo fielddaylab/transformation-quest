@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="230"
+   height="55"
+   viewBox="0 0 230 55"
+   version="1.1"
+   id="svg13"
+   sodipodi:docname="newGameButton.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata19">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>svg/nextButton</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs17" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1435"
+     inkscape:window-height="547"
+     id="namedview15"
+     showgrid="false"
+     inkscape:zoom="4.2057482"
+     inkscape:cx="100.39859"
+     inkscape:cy="31.015854"
+     inkscape:window-x="1231"
+     inkscape:window-y="764"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="Button" />
+  <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+  <title
+     id="title2">svg/nextButton</title>
+  <desc
+     id="desc4">Created with Sketch.</desc>
+  <g
+     style="fill:none;fill-rule:evenodd;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round"
+     transform="translate(2,2)"
+     id="Button">
+    <path
+       inkscape:connector-curvature="0"
+       style="opacity:0.2;mix-blend-mode:multiply;fill:#000000;stroke:#000000;stroke-width:2.5"
+       id="SHADOW"
+       d="M 180.89784,5.3219639 C 158.61609,6.9159203 17.192114,3.7919012 5.064152,13.817895 0.70944956,17.417858 -0.47160077,28.87689 0.15740838,36.111927 1.8687079,48.387672 18.480445,49.770256 32.970502,50.432485 c 18.390509,0.840488 151.645028,-0.04532 165.531188,-0.713309 14.88299,-1.46249 26.60132,-1.46249 26.38717,-20.937223 -0.05,-4.548352 -0.20322,-10.099496 -3.66623,-14.160494 -8.85354,-8.2167471 -26.187,-9.0490005 -40.32479,-9.2994951 z"
+       sodipodi:nodetypes="cscscccc" />
+    <path
+       style="fill:#fab739;stroke:#000000;stroke-width:2.5"
+       inkscape:connector-curvature="0"
+       id="STROKE_99fb390a-b112-4495-90fb-e96524237ba6"
+       d="M 157.12086,2.4129716 C 132.46141,4.006928 17.192114,-2.2080988 5.064152,7.8178947 0.70944956,11.417858 -0.47160077,22.87689 0.15740838,30.111926 1.8687079,42.387672 18.480445,43.770256 32.970502,44.432485 c 18.390509,0.840488 152.596108,1.856834 166.482268,1.188849 14.88299,-1.46249 26.60132,-1.46249 26.38717,-20.937223 -0.05,-4.548352 -0.20322,-10.099496 -3.66623,-14.160494 -6.0003,-9.64336544 -50.91506,-7.8601508 -65.05285,-8.1106454 z"
+       sodipodi:nodetypes="cscscccc" />
+    <path
+       style="stroke:#f5a623;stroke-width:1.5"
+       inkscape:connector-curvature="0"
+       id="Path"
+       d="m 14,37.486443 c 14.489255,2.75165 187.81467,6.810623 200.3387,1.840502 6.11311,-2.425965 7.07954,-13.499926 4.33224,-21.711477"
+       sodipodi:nodetypes="csc" />
+    <path
+       style="stroke:#fbd764;stroke-width:1.5"
+       inkscape:connector-curvature="0"
+       id="path9"
+       d="M 216.03167,13.625262 C 207.80925,8.3724423 188.17842,7.0830847 177.111,7.0211543 160.9534,6.7437911 34.533011,4.8071403 18.948178,7.8177418 10.765239,9.8939259 6.6735364,12.817888 5.5972802,20.4836 4.521024,28.149311 4.4606847,32.169938 9.2098843,35"
+       sodipodi:nodetypes="cccsc" />
+  </g>
+</svg>

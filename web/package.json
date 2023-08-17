@@ -1,0 +1,60 @@
+{
+  "name": "transformations_quest_web",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "framer": "^1.2.11",
+    "lodash": "^4.17.20",
+    "npm-watch": "^0.7.0",
+    "postcss-cli": "^7.1.2",
+    "react": "^16.14.0",
+    "react-beautiful-dnd": "^13.0.0",
+    "react-dom": "^16.14.0",
+    "react-router-dom": "^5.2.0",
+    "tailwindcss": "^1.9.6",
+    "watch": "^1.0.2"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "react-scripts": "3.4.1"
+  },
+  "watch": {
+    "build": {
+      "patterns": [
+        "src"
+      ],
+      "extensions": "js,jsx"
+    }
+  },
+  "scripts": {
+    "start": "export REACT_APP_DEV=true && npm run build:css && react-scripts start",
+    "build": "export REACT_APP_DEV=true REACT_APP_DATA_COLLECTION_BASE_URL=http://localhost:3000 && npm run build:css && react-scripts build",
+    "build-wonderville": "npm run build:css && react-scripts build",
+    "build-local": "export REACT_APP_DEV=true REACT_APP_DATA_COLLECTION_BASE_URL=http://localhost:3000 && npm run build:css && react-scripts build && cp -r build/* ../server/game-web",
+    "build-ucalgary": "export REACT_APP_DEV=true REACT_APP_DATA_COLLECTION_BASE_URL=https://mathgame.ucalgary.ca && npm run build:css && react-scripts build && cp -r build/* ../server/game-web",
+    "build-ucalgary-qa": "export REACT_APP_DEV=true REACT_APP_DATA_COLLECTION_BASE_URL=http://Transformations-env.eba-uapif8yq.us-west-2.elasticbeanstalk.com && npm run build:css && react-scripts build && cp -r build/* ../server/game-web",
+    "watch": "npm-watch",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "build:css": "postcss src/styles/index.css -o src/index.css",
+    "watch:css": "postcss src/styles/index.css -o src/index.css -w"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "proxy": "http://localhost:4000",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

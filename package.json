@@ -1,0 +1,18 @@
+{
+  "name": "transformations_quest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "install": "npm run install:web && npm run install:server",
+    "test": "npm run test:web && npm run test:server",
+    "install:web": "cd web && npm install",
+    "test:web": "export CI=true && cd web && npm test",
+    "start:web": "cd web && npm start",
+    "start:server": "export PORT=4000 && cd server && npm start",
+    "install:server": "cd server && npm install",
+    "test:server": "export CI=true && export DATA_DIRECTORY=/tmp && cd server && npm test"
+  },
+  "author": "",
+  "license": "ISC"
+}
