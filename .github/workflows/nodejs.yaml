@@ -4,17 +4,14 @@
 name: Node.js CI
 
 on:
-  push:
-    branches: [ "develop" ]
-  pull_request:
-    branches: [ "develop" ]
+  workflow_dispatch:
 
 env:
   NODE_VERSION: 16.x
   
 jobs:
   build:
-    runs-on: ubuntu-32.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         node-version: [16.x]
@@ -27,7 +24,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: npm
-    - run: npm install-ci-test
+    - run: npm ci
+    - run: npm test
       
     # - run: rm -rf web/build
     # - run: cd web && npm run build-ucalgary-qa
