@@ -51,16 +51,19 @@ jobs:
 
     # Deploy
       - name: Upload build as artifact
-        uses: actions/upload-artifact@v3
+      # remove old builds
+      - run: rm -rf web/build
+      - run: cd web && npm run build
+      - uses: actions/upload-artifact@v3
         with: 
           name: transformation_quest_${{ env.VERSION }}
-          path: deploy
+          path: web/build
 
       - name: Upload to web server via rsync
         uses: burnett01/rsync-deployments@5.2
         with:
           switches: -avzr --delete
-          path: deploy/*
+          path: web/build/*
           remote_path: ${{ secrets.DEPLOY_DIR }}/${{ env.BRANCH }}
           remote_host: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_HOST }}
           remote_user: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_USER }}
