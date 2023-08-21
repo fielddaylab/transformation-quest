@@ -45,16 +45,15 @@ jobs:
       - name: Setup Package
         run: npm ci
 
-      - name: Build Package
-        # TODO: find the best build script to run for our purposes
-        run: npm run build-local --if-present
+      - name: Remove old builds
+        run: rm -rf web/build
+        
+      - name: Build
+        # TODO: find/define best build script for our purposes
+        run: cd web && npm run build
 
-    # Deploy
-      - name: Upload build as artifact
-      # remove old builds
-      - run: rm -rf web/build
-      - run: cd web && npm run build
-      - uses: actions/upload-artifact@v3
+      - name: Upload build
+        uses: actions/upload-artifact@v3
         with: 
           name: transformation_quest_${{ env.VERSION }}
           path: web/build
