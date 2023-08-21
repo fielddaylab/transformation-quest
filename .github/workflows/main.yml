@@ -1,0 +1,67 @@
+name: Transformation Quest Build & Deploy
+
+on: 
+  push:
+    branches:
+    - develop
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 16.x
+
+jobs:
+  build:
+    name: Build npm project
+    runs-on: ubuntu-20.04
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+    # Install and connect to VPN
+      - name: Install OpenConnect
+        run: sudo apt-get update && sudo apt-get install openconnect
+
+      - name: Connect to VPN
+        run: echo ${{ secrets.FIELDDAY_VPN_PASSWORD }} | sudo openconnect --protocol=gp -u ${{ secrets.FIELDDAY_VPN_USERNAME }} --passwd-on-stdin soe.vpn.wisc.edu &
+    # Setup repo  
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')" >> $GITHUB_ENV
+
+      - name: Extract version name
+        shell: bash
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/\//_/g')" >> $GITHUB_ENV      
+     # Build
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Setup Package
+        run: npm ci
+
+      - name: Build Package
+        # TODO: find the best build script to run for our purposes
+        run: npm run build-local --if-present
+
+    # Deploy
+      - name: Upload build as artifact
+        uses: actions/upload-artifact@v3
+        with: 
+          name: transformation_quest_${{ env.VERSION }}
+          path: deploy
+
+      - name: Upload to web server via rsync
+        uses: burnett01/rsync-deployments@5.2
+        with:
+          switches: -avzr --delete
+          path: deploy/*
+          remote_path: ${{ secrets.DEPLOY_DIR }}/${{ env.BRANCH }}
+          remote_host: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_HOST }}
+          remote_user: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_USER }}
+          remote_key: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_KEY }}          
