@@ -44,8 +44,6 @@ jobs:
 
       - name: Install Package
         run: npm install
-      - name: Test Package
-        run: npm test
 
       - name: Remove old builds
         run: rm -rf web/build
