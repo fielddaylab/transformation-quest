@@ -42,15 +42,17 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
 
-      - name: Setup Package
-        run: npm ci
+      - name: Install Package
+        run: npm install
+      - name: Test Package
+        run: npm test
 
       - name: Remove old builds
         run: rm -rf web/build
         
       - name: Build
         # TODO: find/define best build script for our purposes
-        run: cd web && npm run build
+        run: cd web && npm run build-wonderville
 
       - name: Upload build
         uses: actions/upload-artifact@v3
