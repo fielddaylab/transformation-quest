@@ -41,6 +41,7 @@
     "build:css": "postcss src/styles/index.css -o src/index.css",
     "watch:css": "postcss src/styles/index.css -o src/index.css -w"
   },
+  "homepage": "https://fielddaylab.wisc.edu/play/transformation-quest/ci/develop/",
   "eslintConfig": {
     "extends": "react-app"
   },
