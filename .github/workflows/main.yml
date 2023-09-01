@@ -50,7 +50,7 @@ jobs:
         
       - name: Build
         # TODO: find/define best build script for our purposes
-        run: cd web && npm run build-wonderville
+        run: cd web && npm run build-fieldday-develop
 
       - name: Upload build
         uses: actions/upload-artifact@v3

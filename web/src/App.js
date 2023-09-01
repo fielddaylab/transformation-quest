@@ -16,8 +16,7 @@ export default ({ RouterComponent = BrowserRouter, levels = gameLevels }) => {
   const numberedLevels = levels.map((level, i) => new LevelModel({ ...level, number: i + 1 }))
   const [levelProgression, setLevelProgression] = useState(new LevelProgression({ levels: numberedLevels }))
   // const subdir = process.env.REACT_APP_SUBDIR;
-  // return <RouterComponent basename="/play/transformation-quest/ci/develop">
-  return <RouterComponent>    
+  return <RouterComponent basename="/play/transformation-quest/ci/develop">
     <Switch>
       <Route path={"/title"}><Title levelProgression={levelProgression} setLevelProgression={setLevelProgression}/></Route>
       <Route path={"/introduction"}><Introduction /></Route>
