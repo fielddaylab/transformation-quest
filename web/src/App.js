@@ -16,18 +16,18 @@ export default ({ RouterComponent = BrowserRouter, levels = gameLevels }) => {
   const numberedLevels = levels.map((level, i) => new LevelModel({ ...level, number: i + 1 }))
   const [levelProgression, setLevelProgression] = useState(new LevelProgression({ levels: numberedLevels }))
 
-  return <RouterComponent>
+  return <RouterComponent basename="/play/transformation-quest/ci/develop">
     <Switch>
-      <Route path={"/play/transformation-quest/ci/develop/title"}><Title levelProgression={levelProgression} setLevelProgression={setLevelProgression}/></Route>
-      <Route path={"/play/transformation-quest/ci/develop/introduction"}><Introduction /></Route>
-      <Route path={"/play/transformation-quest/ci/develop/selection"}><LevelSelector levelProgression={levelProgression} /></Route>
+      <Route path={"/title"}><Title levelProgression={levelProgression} setLevelProgression={setLevelProgression}/></Route>
+      <Route path={"/introduction"}><Introduction /></Route>
+      <Route path={"/selection"}><LevelSelector levelProgression={levelProgression} /></Route>
       {levelProgression.levels.map((levelModel, i) =>
-        <Route path={"/play/transformation-quest/ci/develop/level/" + levelModel.number} key={i}>
-          {!levelProgression.canPlay(levelModel.number) && <Redirect to={"/play/transformation-quest/ci/develop/level/" + levelProgression.currentLevel()} />}
+        <Route path={"/level/" + levelModel.number} key={i}>
+          {!levelProgression.canPlay(levelModel.number) && <Redirect to={"/level/" + levelProgression.currentLevel()} />}
           <LevelContainer levelModel={levelModel} afterExecute={newModel => setLevelProgression(levelProgression.progress(newModel))} />
         </Route>
       )}
-      <Redirect to="/play/transformation-quest/ci/develop/title" />
+      <Redirect to="/title" />
     </Switch>
   </RouterComponent>
 }
