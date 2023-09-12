@@ -15,6 +15,7 @@ export default ({ levelProgression, setLevelProgression }) => {
 
     const onChange = (event) => {
         setSessionId(event.target.value);
+        // OGDLogger.log("enter_code", {code:{sessionId}})
     }
 
     const resumeGame = () => {
@@ -29,15 +30,18 @@ export default ({ levelProgression, setLevelProgression }) => {
             }
             setError("")
             setLevelProgression(levelProgression)
+            // OGDLogger.log("continue_game")
             history.push('/selection')
         }).catch(error => {
             setError("Invalid Code - Please try again.")
             console.log(error)
         })
+        
     }
 
     const startGame = () => {
         startDataCollectionSession()
+        // OGDLogger.log("begin_game");
         history.push('/introduction')
     }
 

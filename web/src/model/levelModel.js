@@ -109,7 +109,7 @@ export default class LevelModel {
         if (this.medalCriteria && this.won) {
             const medalMatch = _.findLast(this.medalCriteria, medalCriteria => medalCriteria.attained(this))
             if (medalMatch) {
-                this.medal = medalMatch.medal
+                this.medal = medalMatch.medal // highest attained medal
                 if (!this.acquiredMedals.includes(this.medal)) this.acquiredMedals = [this.medal, ...this.acquiredMedals]
             }
         }

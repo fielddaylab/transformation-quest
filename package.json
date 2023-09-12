@@ -14,5 +14,8 @@
     "test:server": "export CI=true && export DATA_DIRECTORY=/tmp && cd server && npm test"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "opengamedata-js-log": "^1.2.3"
+  }
 }

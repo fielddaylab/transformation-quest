@@ -166,6 +166,19 @@ export default ({ afterExecute, ...props }) => {
         }
     }
 
+    const onClickPlay = () => {
+
+    }
+    const onClickMissionButton = () => {
+        if (missionModal) {
+            // TODO: add timer to track number of seconds from mission open to close
+            // OGDLogger.log("click_dismiss_mission")
+        } else {
+            // OGDLogger.log("click_level_mission")
+        }
+        setMissionModal(!missionModal)
+    }
+
     const completedContent = (() => {
         if (!levelModel.complete) return null
 
@@ -271,7 +284,7 @@ export default ({ afterExecute, ...props }) => {
         >
             <button className='self-start my-2' data-testid='goto-level-select' onClick={() => history.push('/selection')}
                 style={{ backgroundImage: `url(${BackToMap})`, backgroundSize: '100% 100%', fontFamily: 'Sniglet', width: '129px', height: '27px' }} />
-            <MissionButton className={completedContent ? 'z-0' : 'z-40'} onClick={() => setMissionModal(!missionModal)}>Mission</MissionButton>
+            <MissionButton className={completedContent ? 'z-0' : 'z-40'} onClick={onClickMissionButton}>Mission</MissionButton>
             <h2 className="uppercase text-white text-2xl mb-2 mt-4" style={{ fontFamily: 'Sniglet' }}>Coding Blocks</h2>
             <CodingBlocks disabled={isExecuting} addBlock={addBlock} insideLoop={!!levelModel.editLoop} availableBlocks={levelModel.availableBlocks} />
         </div>

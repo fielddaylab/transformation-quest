@@ -58,6 +58,15 @@ export default () => {
     let history = useHistory()
     const [activeIndex, setActiveIndex] = useState(0)
 
+    const onClickForward = () => {
+        // OGDLogger.log("click_tutorial_next", {from_index: activeIndex})
+        activeIndex < 2 ? setActiveIndex(activeIndex + 1) : history.push('/selection')
+    }
+    const onClickBack = () => {
+        // OGDLogger.log("click_tutorial_back, {from_index: activeIndex})
+        setActiveIndex(activeIndex - 1)
+    }
+
     return <div className='h-screen' style={{ backgroundColor: '#71C0CE' }}>
         <div className='mx-3 pt-32 text-storyWhite flex justify-center items-center' style={{ zIndex: 1 }}>
             <Monster
@@ -76,7 +85,7 @@ export default () => {
                 </Counter>
 
                 <IntroductionButton
-                    onClick={() => activeIndex < 2 ? setActiveIndex(activeIndex + 1) : history.push('/selection')}
+                    onClick={onClickForward}
                     className='absolute text-2xl' data-testid={'next-button-' + activeIndex}
                     style={{ bottom: '100px', right: '-60px' }}
                 >
@@ -84,7 +93,7 @@ export default () => {
             </IntroductionButton>
 
                 <IntroductionButton
-                    onClick={() => setActiveIndex(activeIndex - 1)}
+                    onClick={onClickBack}
                     className='absolute text-2xl' data-testid='back-button'
                     style={{ bottom: '100px', left: '-60px', visibility: activeIndex === 0 ? 'hidden' : 'visible' }}
                 >

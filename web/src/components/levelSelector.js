@@ -67,10 +67,17 @@ const LevelTriangle = ({ x, y, disabled, onClick, ...rest }) =>
 
 export default ({ levelProgression }) => {
   let history = useHistory()
-  const gameComplete = _.last(levelProgression.levels).acquiredMedals.length > 0
+  const gameComplete = _.last(levelProgression.levels).acquiredMedals.length > 0 // has acquired any medal on the last level
   const [missionModal, setMissionModal] = useState(gameComplete && !levelProgression.hasCompletedGame)
   if(gameComplete) levelProgression.hasCompletedGame = true
   let sessionId = getSessionId()
+
+  const onClickLevel = (number) => {
+    // TODO: verify shield fetch
+    let shields = levelProgression.levels[number].acquiredMedals;
+    // OGDLogger.log("select_level", {level: number, level_shields:shields})
+    history.push('/level/' + number)
+  }
 
   return <div className='flex justify-center items-center bg-canvas h-screen' style={{backgroundColor: '#71c0ce'}}>
 
@@ -108,7 +115,7 @@ export default ({ levelProgression }) => {
         }
         return <React.Fragment key={i}>
           {nextPos && <line x1={pos.x} y1={pos.y} x2={nextPos.x} y2={nextPos.y} stroke={canPlayNext ? 'black' : "#999999"} strokeWidth='3' strokeDasharray="15 10" strokeLinecap="round" />}
-          <LevelTriangle x={pos.x} y={pos.y} data-testid={id} onClick={() => history.push('/level/' + number)} disabled={!canPlay} />
+          <LevelTriangle x={pos.x} y={pos.y} data-testid={id} onClick={onClickLevel(number)} disabled={!canPlay} />
           <image x={textPos.x - 12} y={textPos.y - 15} href={canPlay ? pos.enabledNummber : pos.disabledNumber} />
           {acquiredMedals.map((medal, i) => <image key={i} x={shieldPos.x + (13 * (i-1))} y={shieldPos.y} href={shieldMap[medal]} height='50px' width='36px' />)}
         </React.Fragment>
