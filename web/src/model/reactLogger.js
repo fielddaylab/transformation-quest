@@ -4,9 +4,10 @@ import { FirebaseConsts } from "./FBConfig";
 
 export default class ReactLogger {
     constructor(obj) {
-        this.ogdLogger = new OGDLogger("TRANSFORMATION_QUEST", "0.10")
+        this.ogdLogger = new OGDLogger("transformation_quest", "0.10")
         console.log("new ReactLogger created")
-        this.ogdLogger.setDebug(true)
+        this.ogdLogger.useFirebase(FirebaseConsts)
+        //this.ogdLogger.setDebug(true)
     }
 
     log(eventName, eventDetail) {
