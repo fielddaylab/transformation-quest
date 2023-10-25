@@ -15,7 +15,7 @@ const defaultBlockCreation = [
   () => Blocks.createLoop(2)
 ]
 
-export default ({ disabled, addBlock, insideLoop, availableBlocks }) =>
+const CodingBlock = ({ disabled, addBlock, insideLoop, availableBlocks }) =>
   defaultBlockCreation
     .map(fn => fn())
     .filter(({ type }) => availableBlocks.includes(type))
@@ -32,3 +32,5 @@ export default ({ disabled, addBlock, insideLoop, availableBlocks }) =>
         </div>}
       </button>
     })
+
+export default CodingBlock

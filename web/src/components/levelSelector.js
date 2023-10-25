@@ -65,7 +65,7 @@ const mapData = [
 const LevelTriangle = ({ x, y, disabled, onClick, ...rest }) =>
   <image x={x - 27} y={y - 27} onClick={disabled ? null : onClick} className={disabled ? '' : 'cursor-pointer'} href={disabled ? DisabledTriangle : AvailableTriangle} {...rest} />
 
-export default ({ levelProgression }) => {
+const LevelSelector = ({ levelProgression }) => {
   let history = useHistory()
   const gameComplete = _.last(levelProgression.levels).acquiredMedals.length > 0 // has acquired any medal on the last level
   const [missionModal, setMissionModal] = useState(gameComplete && !levelProgression.hasCompletedGame)
@@ -74,7 +74,7 @@ export default ({ levelProgression }) => {
 
   const onClickLevel = (number) => {
     // TODO: verify shield fetch
-    let shields = levelProgression.levels[number].acquiredMedals;
+    // let shields = levelProgression.levels[number].acquiredMedals;
     // OGDLogger.log("select_level", {level: number, level_shields:shields})
     history.push('/level/' + number)
   }
@@ -123,3 +123,5 @@ export default ({ levelProgression }) => {
     </svg>
   </div>
 }
+
+export default LevelSelector

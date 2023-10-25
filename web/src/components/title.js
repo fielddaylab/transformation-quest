@@ -8,7 +8,7 @@ import { loadDataCollectionSession, startDataCollectionSession } from "../model/
 import BackArrow from '../assets/backArrow.svg'
 import reactLogger from "../model/reactLogger"
 
-export default ({ levelProgression, setLevelProgression }) => {
+const Title = ({ levelProgression, setLevelProgression }) => {
     let history = useHistory()
     let [showingCodeEntry, setShowingCodeEntry] = useState(false)
     let [sessionId, setSessionId] = useState('')
@@ -79,3 +79,5 @@ export default ({ levelProgression, setLevelProgression }) => {
 
     </div>
 }
+
+export default Title

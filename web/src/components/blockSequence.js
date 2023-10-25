@@ -107,7 +107,7 @@ const InsertMaker = ({ onPress, focus }) =>
     {focus ? 'Select Coding Block' : 'Click to activate'}
   </div>
 
-export default ({ blocks, focusLoop, reorderInstructions, executeInstructions, setEditLoop, removeInstruction, updateInstruction, disabled }) => {
+const BlockSequence = ({ blocks, focusLoop, reorderInstructions, executeInstructions, setEditLoop, removeInstruction, updateInstruction, disabled }) => {
 
   function reorderInstructionArray(blocks, moveFrom, moveTo) {
     const [removed] = blocks.splice(moveFrom, 1)
@@ -204,3 +204,5 @@ export default ({ blocks, focusLoop, reorderInstructions, executeInstructions, s
 
   </>
 }
+
+export default BlockSequence

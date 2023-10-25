@@ -13,7 +13,7 @@ import './app.css'
 
 const gameLevels = [level1, level2, level3, level4, level5, level6, level7, level8, level9, level10, level11]
 
-export default ({ RouterComponent = BrowserRouter, levels = gameLevels }) => {
+const App = ({ RouterComponent = BrowserRouter, levels = gameLevels }) => {
   const numberedLevels = levels.map((level, i) => new LevelModel({ ...level, number: i + 1 }))
   const [levelProgression, setLevelProgression] = useState(new LevelProgression({ levels: numberedLevels }))
   //const [reactLogger, setReactLogger] = useLogger(new ReactLogger)
@@ -33,3 +33,5 @@ export default ({ RouterComponent = BrowserRouter, levels = gameLevels }) => {
     </Switch>
   </RouterComponent>
 }
+
+export default App

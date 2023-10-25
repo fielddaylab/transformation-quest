@@ -55,7 +55,7 @@ const Monster = ({ children, className, monster, style, ...rest }) => <div
     {children}
 </div>
 
-export default () => {
+const Introduction = () => {
     let history = useHistory()
     const [activeIndex, setActiveIndex] = useState(0)
 
@@ -123,4 +123,5 @@ export default () => {
     </div>
 }
 
+export default Introduction
 

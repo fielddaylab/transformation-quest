@@ -83,7 +83,7 @@ const SideMenu = ({ title, yPos = 0, isOpen, onTap, children, style, className, 
 
 const Medal = ({ medal, style, ...rest }) => <img style={{ width: '63px', height: '87px', ...style }} alt={'Shield'} src={medal} {...rest}/>
 
-export default ({ afterExecute, ...props }) => {
+const LevelContainer = ({ afterExecute, ...props }) => {
 
     let history = useHistory()
     const [levelModel, setLevelModel] = useState(props.levelModel)
@@ -166,9 +166,10 @@ export default ({ afterExecute, ...props }) => {
         }
     }
 
-    const onClickPlay = () => {
+    // const onClickPlay = () => {
 
-    }
+    // }
+    
     const onClickMissionButton = () => {
         if (missionModal) {
             // TODO: add timer to track number of seconds from mission open to close
@@ -376,3 +377,5 @@ export default ({ afterExecute, ...props }) => {
     </div >
 
 }
+
+export default LevelContainer;
