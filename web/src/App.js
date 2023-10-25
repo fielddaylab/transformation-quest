@@ -8,8 +8,7 @@ import Title from "./components/title"
 import LevelProgression from './model/levelProgressionModel'
 import LevelContainer from './components/levelContainer'
 import { Route, Redirect } from "react-router-dom"
-import OGDLogger from "opengamedata-js-log"
-import ReactLogger from "./model/reactLogger"
+//import ReactLogger from "./model/reactLogger"
 import './app.css'
 
 const gameLevels = [level1, level2, level3, level4, level5, level6, level7, level8, level9, level10, level11]
@@ -17,7 +16,7 @@ const gameLevels = [level1, level2, level3, level4, level5, level6, level7, leve
 export default ({ RouterComponent = BrowserRouter, levels = gameLevels }) => {
   const numberedLevels = levels.map((level, i) => new LevelModel({ ...level, number: i + 1 }))
   const [levelProgression, setLevelProgression] = useState(new LevelProgression({ levels: numberedLevels }))
-  const [reactLogger, setReactLogger] = useLogger(new ReactLogger)
+  //const [reactLogger, setReactLogger] = useLogger(new ReactLogger)
   const subdir = process.env.REACT_APP_SUBDIR;
   return <RouterComponent basename={subdir}>
     <Switch>
