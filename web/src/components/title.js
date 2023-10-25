@@ -6,7 +6,7 @@ import { ResumeButton } from "./uiComponents"
 import StartScreen from "../assets/startScreen.svg"
 import { loadDataCollectionSession, startDataCollectionSession } from "../model/dataCollectionApi"
 import BackArrow from '../assets/backArrow.svg'
-import reactLogger from "./reactLogger"
+import reactLogger from "../model/reactLogger"
 
 export default ({ levelProgression, setLevelProgression }) => {
     let history = useHistory()
