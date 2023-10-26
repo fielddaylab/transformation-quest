@@ -7,7 +7,6 @@ import monster2 from '../assets/Monster2.svg'
 import monster3 from '../assets/Monster3.svg'
 import monster4 from '../assets/Monster4.svg'
 import { IntroductionButton } from './uiComponents'
-//import reactLogger from "../model/reactLogger"
 
 const textMap = [
     <>You have been selected to save the <span className='text-highlight'>Planet of Adanac</span>, which has recently come under attack by invaders from the Planet Smreg.<br></br> <br></br>
@@ -60,13 +59,11 @@ const Introduction = () => {
     const [activeIndex, setActiveIndex] = useState(0)
 
     const onClickForward = () => {
-        // reactLogger.log("click_tutorial_next", {from_index: activeIndex})
-        // OGDLogger.log("click_tutorial_next", {from_index: activeIndex})
+        reactLogger.log("click_tutorial_next", {from_index: activeIndex})
         activeIndex < 2 ? setActiveIndex(activeIndex + 1) : history.push('/selection')
     }
     const onClickBack = () => {
-        // reactLogger.log("click_tutorial_back", {from_index: activeIndex})
-        // OGDLogger.log("click_tutorial_back, {from_index: activeIndex})
+        reactLogger.log("click_tutorial_back", {from_index: activeIndex})
         setActiveIndex(activeIndex - 1)
     }
 

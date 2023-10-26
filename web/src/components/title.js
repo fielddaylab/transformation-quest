@@ -6,7 +6,6 @@ import { ResumeButton } from "./uiComponents"
 import StartScreen from "../assets/startScreen.svg"
 import { loadDataCollectionSession, startDataCollectionSession } from "../model/dataCollectionApi"
 import BackArrow from '../assets/backArrow.svg'
-//import reactLogger from "../model/reactLogger"
 
 const Title = ({ levelProgression, setLevelProgression }) => {
     let history = useHistory()
@@ -16,7 +15,7 @@ const Title = ({ levelProgression, setLevelProgression }) => {
 
     const onChange = (event) => {
         setSessionId(event.target.value);
-        // OGDLogger.log("enter_code", {code:{sessionId}})
+        reactLogger.log("enter_code", {code:{sessionId}})
     }
 
     const resumeGame = () => {
@@ -31,8 +30,7 @@ const Title = ({ levelProgression, setLevelProgression }) => {
             }
             setError("")
             setLevelProgression(levelProgression)
-            // reactLogger.log("continue_game")
-            // OGDLogger.log("continue_game")
+            reactLogger.log("continue_game")
             history.push('/selection')
         }).catch(error => {
             setError("Invalid Code - Please try again.")
@@ -43,8 +41,7 @@ const Title = ({ levelProgression, setLevelProgression }) => {
 
     const startGame = () => {
         startDataCollectionSession()
-        // reactLogger.log("begin_game")
-        // OGDLogger.log("begin_game");
+        reactLogger.log("begin_game")
         history.push('/introduction')
     }
 

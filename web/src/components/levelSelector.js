@@ -74,8 +74,8 @@ const LevelSelector = ({ levelProgression }) => {
 
   const onClickLevel = (number) => {
     // TODO: verify shield fetch
-    // let shields = levelProgression.levels[number].acquiredMedals;
-    // OGDLogger.log("select_level", {level: number, level_shields:shields})
+    let shields = levelProgression.levels[number].acquiredMedals;
+    reactLogger.log("select_level", {level: number, level_shields: shields})
     history.push('/level/' + number)
   }
 
