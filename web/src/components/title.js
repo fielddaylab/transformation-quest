@@ -7,7 +7,7 @@ import StartScreen from "../assets/startScreen.svg"
 import { loadDataCollectionSession, startDataCollectionSession } from "../model/dataCollectionApi"
 import BackArrow from '../assets/backArrow.svg'
 
-const Title = ({ levelProgression, setLevelProgression }) => {
+const Title = ({ levelProgression, setLevelProgression, reactLogger }) => {
     let history = useHistory()
     let [showingCodeEntry, setShowingCodeEntry] = useState(false)
     let [sessionId, setSessionId] = useState('')

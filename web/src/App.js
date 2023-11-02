@@ -22,11 +22,11 @@ const App = ({ RouterComponent = BrowserRouter, levels = gameLevels }) => {
     <Switch>
       <Route path={"/title"}><Title levelProgression={levelProgression} setLevelProgression={setLevelProgression} reactLogger = {reactLogger}/></Route>
       <Route path={"/introduction"}><Introduction reactLogger = {reactLogger} /></Route>
-      <Route path={"/selection"}><LevelSelector levelProgression={levelProgression} /></Route>
+      <Route path={"/selection"}><LevelSelector levelProgression={levelProgression} reactLogger = {reactLogger}/></Route>
       {levelProgression.levels.map((levelModel, i) =>
         <Route path={"/level/" + levelModel.number} key={i}>
           {!levelProgression.canPlay(levelModel.number) && <Redirect to={"/level/" + levelProgression.currentLevel()} />}
-          <LevelContainer levelModel={levelModel} afterExecute={newModel => setLevelProgression(levelProgression.progress(newModel))} />
+          <LevelContainer levelModel={levelModel} afterExecute={newModel => setLevelProgression(levelProgression.progress(newModel))} reactLogger = {reactLogger} />
         </Route>
       )}
       <Redirect to="/title" />

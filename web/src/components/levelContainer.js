@@ -83,7 +83,7 @@ const SideMenu = ({ title, yPos = 0, isOpen, onTap, children, style, className, 
 
 const Medal = ({ medal, style, ...rest }) => <img style={{ width: '63px', height: '87px', ...style }} alt={'Shield'} src={medal} {...rest}/>
 
-const LevelContainer = ({ afterExecute, ...props }) => {
+const LevelContainer = ({ afterExecute, ...props }, { reactLogger }) => {
 
     let history = useHistory()
     const [levelModel, setLevelModel] = useState(props.levelModel)

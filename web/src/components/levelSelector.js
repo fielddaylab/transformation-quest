@@ -65,7 +65,7 @@ const mapData = [
 const LevelTriangle = ({ x, y, disabled, onClick, ...rest }) =>
   <image x={x - 27} y={y - 27} onClick={disabled ? null : onClick} className={disabled ? '' : 'cursor-pointer'} href={disabled ? DisabledTriangle : AvailableTriangle} {...rest} />
 
-const LevelSelector = ({ levelProgression }) => {
+const LevelSelector = ({ levelProgression }, { reactLogger }) => {
   let history = useHistory()
   const gameComplete = _.last(levelProgression.levels).acquiredMedals.length > 0 // has acquired any medal on the last level
   const [missionModal, setMissionModal] = useState(gameComplete && !levelProgression.hasCompletedGame)

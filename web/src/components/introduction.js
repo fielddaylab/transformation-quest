@@ -54,7 +54,7 @@ const Monster = ({ children, className, monster, style, ...rest }) => <div
     {children}
 </div>
 
-const Introduction = () => {
+const Introduction = ({reactLogger}) => {
     let history = useHistory()
     const [activeIndex, setActiveIndex] = useState(0)
 
