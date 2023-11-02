@@ -1,5 +1,4 @@
-import React from 'react'
-import { LogEvent, OGDLogger, OGDLogConsts } from 'opengamedata-js-log'
+import { OGDLogger } from 'opengamedata-js-log'
 // import { FirebaseConsts } from "./FBConfig";
 
 export default class ReactOGDLogger {
