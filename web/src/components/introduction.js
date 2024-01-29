@@ -59,10 +59,12 @@ const Introduction = ({reactLogger}) => {
     const [activeIndex, setActiveIndex] = useState(0)
 
     const onClickForward = () => {
+        console.log("Clicked forward from index " + activeIndex)
         reactLogger.log("click_tutorial_next", {from_index: activeIndex})
         activeIndex < 2 ? setActiveIndex(activeIndex + 1) : history.push('/selection')
     }
     const onClickBack = () => {
+        console.log("Clicked back from index " + activeIndex)
         reactLogger.log("click_tutorial_back", {from_index: activeIndex})
         setActiveIndex(activeIndex - 1)
     }

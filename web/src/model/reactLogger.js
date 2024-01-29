@@ -9,8 +9,12 @@ export default class ReactOGDLogger {
         this.ogdLogger.setDebug(true)
     }
 
+    /**
+     * Writes an event to the buffer.
+     * @param {string} eventName
+     * @param {object?} eventParams
+     */
     log(eventName, eventDetail) {
         this.ogdLogger.log(eventName, eventDetail)
     }
 }
-
