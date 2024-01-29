@@ -119,7 +119,7 @@ export const HowToPlayModal = ({children, NextPage, PreviousPage, setHowToPlayPa
 }
 
 export const HowToPlayRegular1 = ({setHowToPlayPage, onClose}) => 
-  <HowToPlayModal NextPage={HowToPlayRegular2} setHowToPlayPage={setHowToPlayPage} onClose={onClose}>
+  <HowToPlayModal NextPage={HowToPlayRegular2} setHowToPlayPage={setHowToPlayPage} onClose={() => onClose(1)}>
     <div className="flex flex-col items-center px-16 text-xl pb-16" style={{ whiteSpace: 'pre-line' }}>
       <div className="text-center">Place the <span style={{color: "red"}}> RED </span> triangle in the <span style={{color: "red"}}> EXIT </span> by creating and running a block sequence.</div>
       <img src={HtpNormal1} alt=""/>
@@ -128,7 +128,7 @@ export const HowToPlayRegular1 = ({setHowToPlayPage, onClose}) =>
 
 
 export const HowToPlayRegular2 = ({setHowToPlayPage, onClose}) =>
-  <HowToPlayModal PreviousPage={HowToPlayRegular1} NextPage={HowToPlayRegular3} setHowToPlayPage={setHowToPlayPage} onClose={onClose}>
+  <HowToPlayModal PreviousPage={HowToPlayRegular1} NextPage={HowToPlayRegular3} setHowToPlayPage={setHowToPlayPage} onClose={() => onClose(2)}>
     <div className="flex flex-col items-center px-32 text-xl pb-16" style={{ whiteSpace: 'pre-line' }}>
       <div className="text-center">
         Before you begin each level, click on the 
@@ -139,7 +139,7 @@ export const HowToPlayRegular2 = ({setHowToPlayPage, onClose}) =>
   </HowToPlayModal>
 
 export const HowToPlayRegular3 = ({setHowToPlayPage, onClose}) =>
-  <HowToPlayModal PreviousPage={HowToPlayRegular2} NextPage={HowToPlayRegular4} setHowToPlayPage={setHowToPlayPage} onClose={onClose}>
+  <HowToPlayModal PreviousPage={HowToPlayRegular2} NextPage={HowToPlayRegular4} setHowToPlayPage={setHowToPlayPage} onClose={() => onClose(3)}>
     <div className="flex flex-col items-center px-32 text-xl pb-16" style={{ whiteSpace: 'pre-line' }}>
       <div className="text-center">
         Avoid the <span style={{color: "purple"}}> ENEMIES </span> and get the colored
@@ -151,7 +151,7 @@ export const HowToPlayRegular3 = ({setHowToPlayPage, onClose}) =>
   </HowToPlayModal>
 
 export const HowToPlayRegular4 = ({setHowToPlayPage, onClose}) =>
-  <HowToPlayModal PreviousPage={HowToPlayRegular3} setHowToPlayPage={setHowToPlayPage} onClose={onClose}>
+  <HowToPlayModal PreviousPage={HowToPlayRegular3} setHowToPlayPage={setHowToPlayPage} onClose={() => onClose(4)}>
     <div className="flex flex-col items-center px-32 text-xl pb-16" style={{ whiteSpace: 'pre-line' }}>
       <div className="text-center">
         Collect the <span style={{color: "#bf712b"}}> SHIELDS </span> to protect the people of Adanac
@@ -174,7 +174,7 @@ export const HowToPlayRegular4 = ({setHowToPlayPage, onClose}) =>
 
 
 export const HowToPlayCreative1 = ({setHowToPlayPage, onClose}) => 
-  <HowToPlayModal NextPage={HowToPlayCreative2} setHowToPlayPage={setHowToPlayPage} onClose={onClose}>
+  <HowToPlayModal NextPage={HowToPlayCreative2} setHowToPlayPage={setHowToPlayPage} onClose={() => onClose(1)}>
     <div className="flex flex-col items-center py-16 px-16 text-xl" style={{ whiteSpace: 'pre-line' }}>
       <div className="text-center">
         Landing on a <span style={{color: "#ffbe1c"}}> YELLOW triangle gives you 2 points</span> and landing on a 
@@ -222,7 +222,12 @@ export const HowToPlayCreative3 = ({setHowToPlayPage, onClose}) =>
 
 export const MissionModal = ({ children, onClose, className = '', creative, ...rest }) => {
   let [howToPlayPage, setHowToPlayPage] = useState(null)
-  let onCloseHowToPlay = () => setHowToPlayPage(null)
+  let onCloseHowToPlay = (pageNum) => {
+    setHowToPlayPage(null) // on close, set the page to null
+    // When the player clicks the 'x' button to leave the level rules, returning them to the level 'mission' pop-up.
+    console.log("onCloseHowToPlay called. pageNum: " + pageNum);
+    // reactLogger.log("click_level_rules_exit", {'from_index': pageNum})
+  }
   let HowToPlay = creative ? HowToPlayCreative1 : HowToPlayRegular1
 
   return howToPlayPage || 

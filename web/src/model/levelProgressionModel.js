@@ -6,6 +6,7 @@ const isDev = process.env.REACT_APP_DEV
 export default class LevelProgression {
 
   constructor(obj) {
+    console.log("new levelProgression?")
     this.levels = obj.levels.map((level, i) => new LevelModel({ ...level, number: i + 1 }))
     this.hasCompletedGame = obj.hasCompletedGame || false
   }

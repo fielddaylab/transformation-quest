@@ -47,9 +47,6 @@ const shieldMap = {
   'gold': GoldShield,
 }
 
-const shieldEnum = {
-
-}
 
 const mapData = [
 
@@ -76,11 +73,11 @@ const LevelSelector = ({ levelProgression }, { reactLogger }) => {
   if(gameComplete) levelProgression.hasCompletedGame = true
   let sessionId = getSessionId()
 
-  const onClickLevel = (number, acquiredMedals) => {
-    console.log(levelProgression.levels);
-    console.log("level clicked, got " + number + " " + [...acquiredMedals]);
+  const onClickLevel = (number, acquiredMedals, reactLogger) => {
+    // console.log(levelProgression.levels);
+    console.log("level clicked, got level " + number + " with " + [...acquiredMedals]);
     // TODO: verify shield fetch
-    //reactLogger.log("select_level", {level: number, level_shields: []});
+    reactLogger.log("select_level", {level: number, level_shields: [...acquiredMedals]});
     history.push('/level/' + number)
   }
 
@@ -121,7 +118,7 @@ const LevelSelector = ({ levelProgression }, { reactLogger }) => {
         }
         return <React.Fragment key={i}>
           {nextPos && <line x1={pos.x} y1={pos.y} x2={nextPos.x} y2={nextPos.y} stroke={canPlayNext ? 'black' : "#999999"} strokeWidth='3' strokeDasharray="15 10" strokeLinecap="round" />}
-          <LevelTriangle x={pos.x} y={pos.y} data-testid={id} onClick={() => onClickLevel(number, acquiredMedals)} disabled={!canPlay} />
+          <LevelTriangle x={pos.x} y={pos.y} data-testid={id} onClick={() => onClickLevel(number, acquiredMedals, reactLogger)} disabled={!canPlay} />
           <image x={textPos.x - 12} y={textPos.y - 15} href={canPlay ? pos.enabledNummber : pos.disabledNumber} />
           {acquiredMedals.map((medal, i) => <image key={i} x={shieldPos.x + (13 * (i-1))} y={shieldPos.y} href={shieldMap[medal]} height='50px' width='36px' />)}
         </React.Fragment>

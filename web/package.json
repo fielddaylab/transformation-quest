@@ -5,6 +5,7 @@
   "dependencies": {
     "framer": "^1.2.11",
     "lodash": "^4.17.20",
+    "npm": "^10.4.0",
     "npm-watch": "^0.7.0",
     "opengamedata-js-log": "^1.2.4",
     "postcss-cli": "^8.3.1",
@@ -14,6 +15,7 @@
     "react-beautiful-dnd": "^13.0.0",
     "react-dom": "^16.14.0",
     "react-router-dom": "^5.2.0",
+    "serve": "^14.2.1",
     "tailwindcss": "^1.9.6",
     "watch": "^1.0.2"
   },
