@@ -7,6 +7,7 @@ import monster2 from '../assets/Monster2.svg'
 import monster3 from '../assets/Monster3.svg'
 import monster4 from '../assets/Monster4.svg'
 import { IntroductionButton } from './uiComponents'
+import { logEvent } from "../model/reactLogger"
 
 const textMap = [
     <>You have been selected to save the <span className='text-highlight'>Planet of Adanac</span>, which has recently come under attack by invaders from the Planet Smreg.<br></br> <br></br>
@@ -54,18 +55,21 @@ const Monster = ({ children, className, monster, style, ...rest }) => <div
     {children}
 </div>
 
-const Introduction = ({reactLogger}) => {
+const Introduction = () => {
     let history = useHistory()
     const [activeIndex, setActiveIndex] = useState(0)
 
+    logEvent("tutorial_displayed", {tutorial_index: activeIndex, tutorial_text: textMap[activeIndex]})
+    console.log(textMap[activeIndex])
+    
     const onClickForward = () => {
-        console.log("Clicked forward from index " + activeIndex)
-        reactLogger.log("click_tutorial_next", {from_index: activeIndex})
+        // console.log("Clicked forward from index " + activeIndex)
+        logEvent("click_tutorial_next", {from_index: activeIndex})
         activeIndex < 2 ? setActiveIndex(activeIndex + 1) : history.push('/selection')
     }
     const onClickBack = () => {
-        console.log("Clicked back from index " + activeIndex)
-        reactLogger.log("click_tutorial_back", {from_index: activeIndex})
+        // console.log("Clicked back from index " + activeIndex)
+        logEvent("click_tutorial_back", {from_index: activeIndex})
         setActiveIndex(activeIndex - 1)
     }
 

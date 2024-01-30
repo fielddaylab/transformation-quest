@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useHistory } from "react-router-dom"
 
 import {getSessionId} from "../model/dataCollectionApi"
+import { logEvent } from '../model/reactLogger'
 
 import BronzeShield from '../assets/bronzeShield.svg'
 import SilverShield from '../assets/silverShield.svg'
@@ -66,18 +67,21 @@ const mapData = [
 const LevelTriangle = ({ x, y, disabled, onClick, ...rest }) =>
   <image x={x - 27} y={y - 27} onClick={disabled ? null : onClick} className={disabled ? '' : 'cursor-pointer'} href={disabled ? DisabledTriangle : AvailableTriangle} {...rest} />
 
-const LevelSelector = ({ levelProgression }, { reactLogger }) => {
+const LevelSelector = ({ levelProgression }) => {
   let history = useHistory()
   const gameComplete = _.last(levelProgression.levels).acquiredMedals.length > 0 // has acquired any medal on the last level
   const [missionModal, setMissionModal] = useState(gameComplete && !levelProgression.hasCompletedGame)
   if(gameComplete) levelProgression.hasCompletedGame = true
   let sessionId = getSessionId()
 
-  const onClickLevel = (number, acquiredMedals, reactLogger) => {
+  logEvent("navigation_displayed");
+  console.warn("TODO: navigation display, all available levels");
+  const onClickLevel = (number, acquiredMedals) => {
     // console.log(levelProgression.levels);
+    console.log(acquiredMedals);
     console.log("level clicked, got level " + number + " with " + [...acquiredMedals]);
     // TODO: verify shield fetch
-    reactLogger.log("select_level", {level: number, level_shields: [...acquiredMedals]});
+    logEvent("select_level", {level: number, level_shields: [...acquiredMedals]});
     history.push('/level/' + number)
   }
 
@@ -118,7 +122,7 @@ const LevelSelector = ({ levelProgression }, { reactLogger }) => {
         }
         return <React.Fragment key={i}>
           {nextPos && <line x1={pos.x} y1={pos.y} x2={nextPos.x} y2={nextPos.y} stroke={canPlayNext ? 'black' : "#999999"} strokeWidth='3' strokeDasharray="15 10" strokeLinecap="round" />}
-          <LevelTriangle x={pos.x} y={pos.y} data-testid={id} onClick={() => onClickLevel(number, acquiredMedals, reactLogger)} disabled={!canPlay} />
+          <LevelTriangle x={pos.x} y={pos.y} data-testid={id} onClick={() => onClickLevel(number, acquiredMedals)} disabled={!canPlay} />
           <image x={textPos.x - 12} y={textPos.y - 15} href={canPlay ? pos.enabledNummber : pos.disabledNumber} />
           {acquiredMedals.map((medal, i) => <image key={i} x={shieldPos.x + (13 * (i-1))} y={shieldPos.y} href={shieldMap[medal]} height='50px' width='36px' />)}
         </React.Fragment>

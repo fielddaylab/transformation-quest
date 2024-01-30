@@ -22,6 +22,7 @@ import { MissionButton, MissionModal, RestartButton, PlayAgainButton, AdvanceLev
 import { storyMap } from '../levelData'
 import { Frame } from "framer"
 import BackToMap from "../assets/backtoMap.svg"
+import { logEvent } from '../model/reactLogger'
 
 const shieldMap = {
     [MEDALS.bronze]: BronzeShield,
@@ -83,7 +84,7 @@ const SideMenu = ({ title, yPos = 0, isOpen, onTap, children, style, className, 
 
 const Medal = ({ medal, style, ...rest }) => <img style={{ width: '63px', height: '87px', ...style }} alt={'Shield'} src={medal} {...rest}/>
 
-const LevelContainer = ({ afterExecute, ...props }, { reactLogger }) => {
+const LevelContainer = ({ afterExecute, ...props }) => {
 
     let history = useHistory()
     const [levelModel, setLevelModel] = useState(props.levelModel)
@@ -171,37 +172,106 @@ const LevelContainer = ({ afterExecute, ...props }, { reactLogger }) => {
     // }
     
     const onClickMissionButton = () => {
+        console.warn("TODO: add timer to track number of seconds from mission open to close!");
         if (missionModal) {
-            // TODO: add timer to track number of seconds from mission open to close
-            // OGDLogger.log("click_dismiss_mission")
+            logEvent("click_dismiss_mission")
         } else {
-            // OGDLogger.log("click_level_mission")
+            logEvent("click_level_mission")
         }
         setMissionModal(!missionModal)
+    }
+
+    const onClickReplayButton = () => {
+        // console.log("Replay level");
+        logEvent("click_replay_level");
+        console.warn("TODO: add timer for number of seconds feedback was open")
+        logEvent("dismiss_sequence_feedback")
+        restart();
+    }
+
+    const onClickNextLevelButton = () => {
+        // console.log("Next level");
+        logEvent("click_next_level")
+        console.warn("TODO: add timer for number of seconds feedback was open")
+        logEvent("dismiss_sequence_feedback")
+        goToSelectionPage()
+    }
+
+    const onClickReturnButton = () => {
+        // console.log("Return to Map")
+        logEvent("click_return_to_map")
+        if (!levelModel.won) {
+            logEvent("level_quit")
+        }
+        goToSelectionPage();
+    }
+
+    const toggleLegend = () => {
+        if (openSideMenuIndex === 0) {
+            logEvent("dismiss_legend")
+            console.warn("TODO: dismiss_legend, add open duration timer")
+        } else {
+            logEvent("legend_displayed")
+        }
+        toggleSideMenuAt(0)
+    }
+
+    const toggleObjective = () => {
+        if (openSideMenuIndex === 1) {
+            logEvent("dismiss_objective")
+            console.warn("TODO: dismiss_legend, add open duration timer")
+        } else {
+            logEvent("objectives_displayed")
+            console.warn("TODO: objectives_displayed add text content")
+        }
+        toggleSideMenuAt(1)
     }
 
     const completedContent = (() => {
         if (!levelModel.complete) return null
 
-        if (levelModel.error) return <>
-            <div data-testid='level-error' className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Out of Bounds!</div>
-            <div className="mt-5 text-lg text-mineShaft mb-16 text-center">{levelModel.error.message}</div>
-            <RestartButton onClick={restart} />
-        </>
+        if (levelModel.error) {
+            
+            return <>
+                <div data-testid='level-error' className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Out of Bounds!</div>
+                <div className="mt-5 text-lg text-mineShaft mb-16 text-center">{levelModel.error.message}</div>
+                <RestartButton onClick={() => {
+                    console.warn("TODO: add timer for number of seconds feedback was open")
+                    logEvent("dismiss_sequence_feedback")
+                    restart();
+                    }} />
+            </>
+        }
 
-        if (levelModel.obstacleHit) return <>
-            <div data-testid='obstacle-hit-modal' className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Collision!</div>
-            <div className="mt-5 text-lg text-mineShaft mb-16">{errors.hitObstacle}</div>
-            <RestartButton onClick={restart} />
-        </>
 
-        if (levelModel.won && levelModel.medal) return <>
-            <div data-testid='won-modal' className='text-cerulean text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Shield achieved:</div>
-            <Medal medal={shieldMap[levelModel.medal]} />
-            <div className="text-lg text-mineShaft">Advance to the next level, or play this level again for a higher score.</div>
-            <AdvanceLevelButton onClick={goToSelectionPage} />
-            <PlayAgainButton onClick={restart} />
-        </>
+        if (levelModel.obstacleHit) {
+            console.warn("TODO: sequence fail, show failure data")
+            logEvent("sequence_fail_displayed")
+            return <>
+                <div data-testid='obstacle-hit-modal' className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Collision!</div>
+                <div className="mt-5 text-lg text-mineShaft mb-16">{errors.hitObstacle}</div>
+                <RestartButton onClick={() => {
+                    console.warn("TODO: add timer for number of seconds feedback was open")
+                    logEvent("dismiss_sequence_feedback")
+                    restart();
+                    }} />
+            </>
+        }
+
+
+        if (levelModel.won && levelModel.medal) {
+            console.warn("TODO: sequence success, show success data")
+            logEvent("sequence_success_displayed")
+            // console.log("Level complete")
+            logEvent("level_complete")
+            return <>
+                <div data-testid='won-modal' className='text-cerulean text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Shield achieved:</div>
+                <Medal medal={shieldMap[levelModel.medal]} />
+                <div className="text-lg text-mineShaft">Advance to the next level, or play this level again for a higher score.</div>
+                <AdvanceLevelButton onClick={onClickNextLevelButton} />
+                <PlayAgainButton onClick={onClickReplayButton} />
+            </>
+        }
 
         return <>
             <div className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Keep trying!</div>
@@ -223,7 +293,7 @@ const LevelContainer = ({ afterExecute, ...props }, { reactLogger }) => {
             <div className="flex flex-col items-center px-16 text-xl" style={{ whiteSpace: 'pre-line' }}>{storyText}</div>
         </MissionModal>}
 
-        <SideMenu title='Legend' yPos={65} isOpen={openSideMenuIndex === 0} onTap={() => toggleSideMenuAt(0)}>
+        <SideMenu title='Legend' yPos={65} isOpen={openSideMenuIndex === 0} onTap={toggleLegend}>
             <div style={{ fontFamily: 'Sniglet' }} className='flex flex-col text-2xl'>
                 {Object.values(REWARDS).map((rewardType, i) => {
                     return <div className='flex flex-row mb-5' key={i}>
@@ -265,7 +335,7 @@ const LevelContainer = ({ afterExecute, ...props }, { reactLogger }) => {
             </div>
         </SideMenu>
 
-        <SideMenu title='Objectives' isOpen={openSideMenuIndex === 1} onTap={() => toggleSideMenuAt(1)} yPos={10} data-testid='scoring'>
+        <SideMenu title='Objectives' isOpen={openSideMenuIndex === 1} onTap={toggleObjective} yPos={10} data-testid='scoring'>
             <div style={{ fontFamily: 'Sniglet', marginBottom: '15px' }} className="mt-1 text-yellow-600 text-2xl">
                 {levelModel.description}
             </div>
@@ -283,7 +353,7 @@ const LevelContainer = ({ afterExecute, ...props }, { reactLogger }) => {
             className="flex flex-col w-64 -ml-1 pl-5 pr-4 py-6 -my-4"
             style={{ backgroundImage: `url(${CodingBlocksBackground})`, backgroundSize: '100% 100%', fontFamily: 'Sniglet' }}
         >
-            <button className='self-start my-2' data-testid='goto-level-select' onClick={() => history.push('/selection')}
+            <button className='self-start my-2' data-testid='goto-level-select' onClick={onClickReturnButton}
                 style={{ backgroundImage: `url(${BackToMap})`, backgroundSize: '100% 100%', fontFamily: 'Sniglet', width: '129px', height: '27px' }} />
             <MissionButton className={completedContent ? 'z-0' : 'z-40'} onClick={onClickMissionButton}>Mission</MissionButton>
             <h2 className="uppercase text-white text-2xl mb-2 mt-4" style={{ fontFamily: 'Sniglet' }}>Coding Blocks</h2>
