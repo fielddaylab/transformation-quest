@@ -17,7 +17,6 @@ import E13 from '../assets/OBSTACLE-SVGs/obstacleMonster1-3x2.svg'
 import E23 from '../assets/OBSTACLE-SVGs/obstacleMonster2-3x2.svg'
 import E33 from '../assets/OBSTACLE-SVGs/obstacleMonster3-3x2.svg'
 import E43 from '../assets/OBSTACLE-SVGs/obstacleMonster3-3x2.svg'
-import { logEvent } from "./reactLogger"
 const oneByOnes = [E11, E21, E31, E41]
 const twoByTwos = [E12, E22, E32, E42]
 const threeByTwos = [E13, E23, E33, E43]
