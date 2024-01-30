@@ -6,8 +6,9 @@ import { ResumeButton } from "./uiComponents"
 import StartScreen from "../assets/startScreen.svg"
 import { loadDataCollectionSession, startDataCollectionSession } from "../model/dataCollectionApi"
 import BackArrow from '../assets/backArrow.svg'
+import { logEvent } from "../model/reactLogger"
 
-const Title = ({ levelProgression, setLevelProgression, reactLogger }) => {
+const Title = ({ levelProgression, setLevelProgression}) => {
     let history = useHistory()
     let [showingCodeEntry, setShowingCodeEntry] = useState(false)
     let [sessionId, setSessionId] = useState('')
@@ -15,12 +16,12 @@ const Title = ({ levelProgression, setLevelProgression, reactLogger }) => {
 
     const onChange = (event) => {
         setSessionId(event.target.value);
-        reactLogger.log("enter_code", {code:{sessionId}})
+        logEvent("enter_code", {code:{sessionId}})
     }
 
     const resumeGame = () => {
         loadDataCollectionSession(sessionId).then(session => {
-            console.log("Resume game:", sessionId)
+            // console.log("Resume game:", sessionId)
             if (session.events) {
                 session.events.forEach(event => {
                     if (event.type === 'runLevel') {
@@ -30,7 +31,7 @@ const Title = ({ levelProgression, setLevelProgression, reactLogger }) => {
             }
             setError("")
             setLevelProgression(levelProgression)
-            reactLogger.log("continue_game")
+            logEvent("continue_game")
             history.push('/selection')
         }).catch(error => {
             setError("Invalid Code - Please try again.")
@@ -41,7 +42,7 @@ const Title = ({ levelProgression, setLevelProgression, reactLogger }) => {
 
     const startGame = () => {
         startDataCollectionSession()
-        reactLogger.log("begin_game")
+        logEvent("begin_game")
         history.push('/introduction')
     }
 

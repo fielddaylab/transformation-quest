@@ -1,10 +1,10 @@
 import { OGDLogger } from 'opengamedata-js-log'
 // import { FirebaseConsts } from "./FBConfig";
 
-export default class ReactOGDLogger {
+export class ReactOGDLogger {
     constructor(obj) {
         this.ogdLogger = new OGDLogger("transformation_quest", "0.10")
-        console.log("new ReactLogger created")
+        console.log("new ReactLogger created?")
         // this.ogdLogger.useFirebase(FirebaseConsts)
         this.ogdLogger.setDebug(true)
     }
@@ -15,6 +15,23 @@ export default class ReactOGDLogger {
      * @param {object?} eventParams
      */
     log(eventName, eventDetail) {
-        this.ogdLogger.log(eventName, eventDetail)
+        // this.ogdLogger.log(eventName, eventDetail)
+        console.log("OGD LOGGED: " + eventName);
+        console.log(eventDetail)
+    }
+}
+
+let logger = new ReactOGDLogger()
+
+export function setLogger(newLogger) {
+    logger = newLogger;
+    return logger;
+}
+
+export function logEvent(eventName, eventDetail) {
+    if (logger) {
+        logger.log(eventName, eventDetail)
+    } else {
+        console.warn("logger not initialized")
     }
 }

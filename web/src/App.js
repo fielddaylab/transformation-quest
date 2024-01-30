@@ -8,7 +8,7 @@ import Title from "./components/title"
 import LevelProgression from './model/levelProgressionModel'
 import LevelContainer from './components/levelContainer'
 import { Route, Redirect } from "react-router-dom"
-import ReactOGDLogger from "./model/reactLogger"
+import {ReactOGDLogger, setLogger} from "./model/reactLogger"
 import './app.css'
 
 const gameLevels = [level1, level2, level3, level4, level5, level6, level7, level8, level9, level10, level11]
@@ -16,17 +16,17 @@ const gameLevels = [level1, level2, level3, level4, level5, level6, level7, leve
 const App = ({ RouterComponent = BrowserRouter, levels = gameLevels }) => {
   const numberedLevels = levels.map((level, i) => new LevelModel({ ...level, number: i + 1 }))
   const [levelProgression, setLevelProgression] = useState(new LevelProgression({ levels: numberedLevels }))
-  const reactLogger = new ReactOGDLogger();
+  const reactLogger = setLogger(new ReactOGDLogger());
   const subdir = process.env.REACT_APP_SUBDIR;
   return <RouterComponent basename={subdir}>
     <Switch>
-      <Route path={"/title"}><Title levelProgression={levelProgression} setLevelProgression={setLevelProgression} reactLogger = {reactLogger}/></Route>
-      <Route path={"/introduction"}><Introduction reactLogger = {reactLogger} /></Route>
-      <Route path={"/selection"}><LevelSelector levelProgression={levelProgression} reactLogger = {reactLogger}/></Route>
+      <Route path={"/title"}><Title levelProgression={levelProgression} setLevelProgression={setLevelProgression}/></Route>
+      <Route path={"/introduction"}><Introduction/></Route>
+      <Route path={"/selection"}><LevelSelector levelProgression={levelProgression}/></Route>
       {levelProgression.levels.map((levelModel, i) =>
         <Route path={"/level/" + levelModel.number} key={i}>
           {!levelProgression.canPlay(levelModel.number) && <Redirect to={"/level/" + levelProgression.currentLevel()} />}
-          <LevelContainer levelModel={levelModel} afterExecute={newModel => setLevelProgression(levelProgression.progress(newModel))} reactLogger = {reactLogger} />
+          <LevelContainer levelModel={levelModel} afterExecute={newModel => {setLevelProgression(levelProgression.progress(newModel))}} />
         </Route>
       )}
       <Redirect to="/title" />

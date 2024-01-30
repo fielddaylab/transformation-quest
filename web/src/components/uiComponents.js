@@ -18,6 +18,7 @@ import HtpNormal3 from '../assets/how-to-play/normal-3.png'
 import HtpCreative1 from '../assets/how-to-play/creative-1.png'
 import HtpCreative2 from '../assets/how-to-play/creative-2.png'
 
+import { logEvent } from '../model/reactLogger'
 import { Frame } from "framer"
 
 export const TitleButton = ({ children, style, className, ...rest }) => <div
@@ -81,6 +82,8 @@ export const MissionButton = ({ children, style, className, ...rest }) =>
   </div>
 
 export const HowToPlayModal = ({children, NextPage, PreviousPage, setHowToPlayPage, onClose}) => {
+  logEvent("level_rules_displayed")
+  console.warn("TODO: add page index, rules text")
   return <div className='z-50 flex items-start fixed inset-0 bg-missionModal justify-center items-center' style={{ fontFamily: 'sniglet' }}>
     <Frame initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} width='700px' height='550px' background=''>
       <div
@@ -92,20 +95,28 @@ export const HowToPlayModal = ({children, NextPage, PreviousPage, setHowToPlayPa
       >
         <button onClick={onClose} className='absolute top-0 right-0 mt-4 mr-12 text-4xl'>x</button>
         {children}
-        { PreviousPage && 
-          <button onClick={() => setHowToPlayPage(<PreviousPage onClose={onClose} setHowToPlayPage={setHowToPlayPage}/> )} 
+        { PreviousPage && // if PreviousPage, add this button
+          <button onClick={() => {
+            console.warn("TODO: show index player was at")
+            logEvent("click_level_rules_back")
+            setHowToPlayPage(<PreviousPage onClose={onClose} setHowToPlayPage={setHowToPlayPage}/> )
+          }} 
             className='absolute bottom-0 left-0 mb-6 ml-6 text-x1'
             style={{ backgroundImage: `url(${cuteButton})`, width: '144px', height: '67px', zIndex: 3, cursor: 'pointer', backgroundRepeat: 'no-repeat', backgroundSize: 'cover' }}>
               Back
           </button>
         }
-        { NextPage ?  
-          <button onClick={() => setHowToPlayPage(<NextPage onClose={onClose} setHowToPlayPage={setHowToPlayPage}/>)} 
+        { NextPage ?  // if NextPage, add this button...
+          <button onClick={() => {
+            console.warn("TODO: show index player was at")
+            logEvent("click_level_rules_next")
+            setHowToPlayPage(<NextPage onClose={onClose} setHowToPlayPage={setHowToPlayPage}/>)
+          }} 
             className='absolute bottom-0 right-0 mb-6 mr-6 text-x1'
             style={{ backgroundImage: `url(${cuteButton})`, fontFamily: 'Sniglet', width: '144px', height: '67px', zIndex: 3, cursor: 'pointer', backgroundRepeat: 'no-repeat', backgroundSize: 'cover' }}>
               Next
           </button>
-          :
+          : // else add this button
           <button onClick={onClose} 
             className='absolute bottom-0 right-0 mb-6 mr-6 text-x1'
             style={{ backgroundImage: `url(${continueButton})`, fontFamily: 'Sniglet', width: '144px', height: '67px', cursor: 'pointer', backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
@@ -220,12 +231,36 @@ export const HowToPlayCreative3 = ({setHowToPlayPage, onClose}) =>
     </div>
   </HowToPlayModal>
 
-export const MissionModal = ({ children, onClose, className = '', creative, ...rest }) => {
+export const MissionModal = ({ children, onClose, pageIndex, className = '', creative, ...rest }) => {
   let [howToPlayPage, setHowToPlayPage] = useState(null)
-  let onCloseHowToPlay = () => setHowToPlayPage(null)
+  
+  const onCloseHowToPlay = () => {
+    setHowToPlayPage(null) // on close, set the page to null
+    console.warn("TODO: add page index to click_level_rules_exit")
+    logEvent("click_level_rules_exit")
+    console.warn("TODO: click_level_rules_finish for last element")
+  }
+
+  const onClickPlay = () => {
+    logEvent("click_level_play")
+    onClose();
+  }
+
   let HowToPlay = creative ? HowToPlayCreative1 : HowToPlayRegular1
 
-  return howToPlayPage || 
+  const onClickRules = () => {
+    console.warn("TODO: click_display_level_rules")
+    logEvent("click_display_level_rules")
+    // create the first how to play page (reg or creative) and assign the base onClose function
+    setHowToPlayPage(<HowToPlay onClose={onCloseHowToPlay} setHowToPlayPage={setHowToPlayPage} />)
+  }
+
+  if (!howToPlayPage) {
+    logEvent("level_mission_displayed")
+    console.warn("TODO: add displayed mission text")
+  }
+
+  return howToPlayPage || // if a howToPlayPAge is set, use that, otherwise use this
   <div className='z-30 flex items-start fixed inset-0 bg-missionModal justify-center items-center' style={{ fontFamily: 'sniglet' }}>
     <Frame initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.5 }} width='450px' height='550px' background=''>
       <div
@@ -236,12 +271,12 @@ export const MissionModal = ({ children, onClose, className = '', creative, ...r
         }}{...rest}
       >
         {children}
-        <button onClick={onClose} 
+        <button onClick={onClickPlay} 
           className='absolute bottom-0 right-0 mb-2 mr-6 text-x1'
           style={{ backgroundImage: `url(${continueButton})`, fontFamily: 'Sniglet', width: '120px', height: '90px', cursor: 'pointer', backgroundSize: '100% 100%'}}>
             Play!
         </button>
-        <button onClick={() => setHowToPlayPage(<HowToPlay onClose={onCloseHowToPlay} setHowToPlayPage={setHowToPlayPage} />)}
+        <button onClick={onClickRules}
           className='absolute bottom-0 left-0 mb-2 ml-6 text-x1'
           style={{ backgroundImage: `url(${newGameButton})`, fontFamily: 'Sniglet', width: '200px', height: '90px', cursor: 'pointer', backgroundSize: '100% 100%'}}>
             { creative ? "Creative Rules" : "Rules"}

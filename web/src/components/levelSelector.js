@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useHistory } from "react-router-dom"
 
 import {getSessionId} from "../model/dataCollectionApi"
+import { logEvent } from '../model/reactLogger'
 
 import BronzeShield from '../assets/bronzeShield.svg'
 import SilverShield from '../assets/silverShield.svg'
@@ -47,9 +48,6 @@ const shieldMap = {
   'gold': GoldShield,
 }
 
-const shieldEnum = {
-
-}
 
 const mapData = [
 
@@ -69,18 +67,21 @@ const mapData = [
 const LevelTriangle = ({ x, y, disabled, onClick, ...rest }) =>
   <image x={x - 27} y={y - 27} onClick={disabled ? null : onClick} className={disabled ? '' : 'cursor-pointer'} href={disabled ? DisabledTriangle : AvailableTriangle} {...rest} />
 
-const LevelSelector = ({ levelProgression }, { reactLogger }) => {
+const LevelSelector = ({ levelProgression }) => {
   let history = useHistory()
   const gameComplete = _.last(levelProgression.levels).acquiredMedals.length > 0 // has acquired any medal on the last level
   const [missionModal, setMissionModal] = useState(gameComplete && !levelProgression.hasCompletedGame)
   if(gameComplete) levelProgression.hasCompletedGame = true
   let sessionId = getSessionId()
 
+  logEvent("navigation_displayed");
+  console.warn("TODO: navigation display, all available levels");
   const onClickLevel = (number, acquiredMedals) => {
-    console.log(levelProgression.levels);
-    console.log("level clicked, got " + number + " " + [...acquiredMedals]);
+    // console.log(levelProgression.levels);
+    console.log(acquiredMedals);
+    console.log("level clicked, got level " + number + " with " + [...acquiredMedals]);
     // TODO: verify shield fetch
-    //reactLogger.log("select_level", {level: number, level_shields: []});
+    logEvent("select_level", {level: number, level_shields: [...acquiredMedals]});
     history.push('/level/' + number)
   }
 
