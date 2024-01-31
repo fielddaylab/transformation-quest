@@ -22,13 +22,13 @@ export class ReactOGDLogger {
     }
 
     updateState({level, levelShields, sequenceBlockCount}) {
-        if (level != undefined) {
+        if (level !== undefined) {
             this.gameState.level = level
         }
-        if (levelShields != undefined) {
+        if (levelShields !== undefined) {
             this.gameState.levelShields = levelShields
         }
-        if (sequenceBlockCount != undefined) {
+        if (sequenceBlockCount !== undefined) {
             this.sequenceBlockCount = sequenceBlockCount
         }
     }

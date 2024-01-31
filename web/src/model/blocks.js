@@ -43,7 +43,7 @@ export const getBlockData = block => {
     let data = {}
     data.block_id = block.id;
     data.block_type = block.type;
-    if (block.type == BLOCK_TYPES.repeat) {
+    if (block.type === BLOCK_TYPES.repeat) {
         data.loop_subelements = getSequenceData(block.blockQueue.queue);
     }
     data.block_params = block.paramMap;
