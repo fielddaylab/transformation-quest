@@ -18,7 +18,7 @@ const defaultBlockCreation = [
 const CodingBlock = ({ disabled, addBlock, insideLoop, availableBlocks }) =>
   defaultBlockCreation
     .map(fn => fn())
-    .filter(({ type }) => availableBlocks.includes(type))
+    .filter(({ type }) => availableBlocks.includes(type)) // only show available blocks
     .map((block, i) => {
       const isLoop = block.type === Blocks.BLOCK_TYPES.repeat
       return <button

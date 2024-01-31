@@ -1,5 +1,5 @@
 import errors from "./errors"
-import { BlockQueue, LoopBlock, BLOCK_TYPES } from './blocks'
+import { BlockQueue, LoopBlock, BLOCK_TYPES, getSequenceData } from './blocks'
 import _ from 'lodash'
 import AxisRange from './axisRange'
 
@@ -17,6 +17,7 @@ import E13 from '../assets/OBSTACLE-SVGs/obstacleMonster1-3x2.svg'
 import E23 from '../assets/OBSTACLE-SVGs/obstacleMonster2-3x2.svg'
 import E33 from '../assets/OBSTACLE-SVGs/obstacleMonster3-3x2.svg'
 import E43 from '../assets/OBSTACLE-SVGs/obstacleMonster3-3x2.svg'
+import { logEvent } from "./reactLogger"
 const oneByOnes = [E11, E21, E31, E41]
 const twoByTwos = [E12, E22, E32, E42]
 const threeByTwos = [E13, E23, E33, E43]
@@ -123,15 +124,34 @@ export default class LevelModel {
     }
 
     addBlock(block) {
+        logEvent("select_new_block", {"block_type": block.type, "block_params": block.paramMap})
         if (block.type !== BLOCK_TYPES.repeat && !this.availableBlocks.includes(block.type)) {
             throw new Error('Bad, you are not allowed to add a block of type: ' + block.id + ' because this level model only has these allowed blocks: ' + this.availableBlocks)
         }
-        let blockQueue = this.blockQueue
-        if (this.editLoop) this.editLoop.addBlock(block)
-        else blockQueue = this.blockQueue.addBlock(block)
+        if (this.editLoop && !this.blockQueue.queue.includes(this.editLoop)) {
+            // editLoop exists but is not in the queue - don't add anything to it
+            return this;
+        }
+        let blockQueue = this.blockQueue;
+        let inLoop = false;
+        let loopId;
+
+        let blockIndex = -1;
+        if (this.editLoop) {
+            this.editLoop.addBlock(block);
+            inLoop = true;
+            loopId = this.editLoop.id
+            blockIndex = this.editLoop.blockQueue.queue.indexOf(block);
+        } else {
+            blockQueue = this.blockQueue.addBlock(block);
+            blockIndex = blockQueue.queue.indexOf(block)
+        }
+
+        logEvent("add_new_block", {"block_id": block.id, "block_index": blockIndex, "in_loop": inLoop, "loop_id": loopId, "block_type": block.type, "block_params": block.paramMap})
+        logEvent("sequence_updated", {'sequence_elements': getSequenceData(blockQueue.queue)})
         return new LevelModel({ ...this, blockQueue, editLoop: block.type === BLOCK_TYPES.repeat ? block : this.editLoop })
     }
-
+    
     removeBlockAt(index) {
         return new LevelModel({ ...this, blockQueue: this.blockQueue.removeBlockAt(index), editLoop: null })
     }

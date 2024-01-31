@@ -9,7 +9,7 @@ import Coin from '../assets/coin.svg'
 import StampIcon from '../assets/stampCounter.svg'
 import CodingBlocks from './codingBlocks'
 import BlockSequence from './blockSequence'
-import { BlockQueue, LoopBlock, BLOCK_TYPES } from '../model/blocks'
+import { BlockQueue, LoopBlock, BLOCK_TYPES, getSequenceData } from '../model/blocks'
 import { PlayingField, Reward, Obstacle, PlayerToken, EndGoal, Stamp, GridLines, AxisLines, GamePieceView, gemMap } from './gameComponents'
 import errors from '../model/errors'
 import { logLevelInDataCollection, logLevelRunInDataCollection } from '../model/dataCollectionApi'
@@ -106,11 +106,21 @@ const LevelContainer = ({ afterExecute, ...props }) => {
         if (models.length) {
             if (models.length === 1 && afterExecute) afterExecute(models[0])
             setLevelModel(models[0])
+            console.warn("TODO sequence step: type, outcome");
+            console.log(levelModel.step);
+            logEvent("sequence_execution_step", {
+                'type': levelModel.step, 
+                'moves_count': levelModel.numberOfMoves + 1, 
+                'blue_gems': levelModel.numberOfGemsCollected(REWARDS.blue), 
+                'yellow_gems': levelModel.numberOfGemsCollected(REWARDS.yellow), 
+                'stamp_points': levelModel.getStampScore(), 
+                'outcome': null});
             setExecutionView(models.filter((_, i) => i > 0))
         }
     }
 
     const executeInstructions = () => {
+        logEvent("run_sequence", {'sequence_elements': getSequenceData(levelModel.blockQueue.queue)})
         let stepModels = levelModel.execute()
         const lastModel = stepModels[stepModels.length - 1]
         logLevelRunInDataCollection(stepModels[0], lastModel)
@@ -140,31 +150,47 @@ const LevelContainer = ({ afterExecute, ...props }) => {
             }
             return block
         }
-        return new LevelModel({ ...levelModel, blockQueue: new BlockQueue(levelModel.blockQueue.queue.map(replaceBlock)), editLoop })
+        let newQueue = new BlockQueue(levelModel.blockQueue.queue.map(replaceBlock))
+        logEvent("sequence_updated",{'sequence_elements': getSequenceData(newQueue.queue)})
+        return new LevelModel({ ...levelModel, blockQueue: newQueue, editLoop })
     }
 
-    const removeInstruction = blockToRemove => {
-        let filterBlock = block => block !== blockToRemove
+    const removeInstruction= rBlock => {
+        let filterBlock = block => block !== rBlock
+
+        let blocks = levelModel.blockQueue.queue
+        let blockIndex = blocks.indexOf(rBlock)
 
         const checkForLoopsContainingBlock = (blocks) => {
             for (let loopBlock of blocks.filter(block => block.type === BLOCK_TYPES.repeat)) {
                 const loopChildren = loopBlock.blockQueue.queue
-                if (loopChildren.indexOf(blockToRemove) !== -1) return replaceInstruction(loopBlock, loopBlock.removeBlock(blockToRemove))
+                 // if in a loop, replace the loop with a new one populated with all others
+                let checkIndex = loopChildren.indexOf(rBlock)
+                 if (checkIndex !== -1) {
+                    blockIndex = checkIndex;
+                    return replaceInstruction(loopBlock, loopBlock.removeBlock(rBlock))
+                }
                 const maybeNewModel = checkForLoopsContainingBlock(loopChildren)
                 if (maybeNewModel) return maybeNewModel
             }
         }
 
         let editLoop = filterBlock(levelModel.editLoop) ? levelModel.editLoop : undefined
+        let inLoop = false;
+        let loopId;
 
-        let blocks = levelModel.blockQueue.queue
-        if (blocks.indexOf(blockToRemove) !== -1) {
-            setLevelModel(new LevelModel({ ...levelModel, blockQueue: new BlockQueue(levelModel.blockQueue.queue.filter(filterBlock)), editLoop }))
+        if (blockIndex !== -1) {
+            blocks = new BlockQueue(levelModel.blockQueue.queue.filter(filterBlock))
+            setLevelModel(new LevelModel({ ...levelModel, blockQueue: blocks, editLoop }))
         }
         else {
             const newModel = checkForLoopsContainingBlock(blocks)
-            setLevelModel(new LevelModel({ ...newModel, editLoop }))
+            inLoop = true;
+            loopId = editLoop && editLoop.id;
+            setLevelModel(new LevelModel({ ...newModel}))
         }
+        logEvent("delete_block", {"block_id": rBlock.id, "block_index": blockIndex, "in_loop": inLoop, "loop_id": loopId, "block_type": rBlock.type, "block_params": rBlock.paramMap})
+        logEvent("sequence_updated", {'sequence_elements': getSequenceData(blocks)})
     }
 
     // const onClickPlay = () => {
@@ -231,6 +257,8 @@ const LevelContainer = ({ afterExecute, ...props }) => {
         if (!levelModel.complete) return null
 
         if (levelModel.error) {
+            console.warn("TODO: sequence fail, show failure data")
+            logEvent("sequence_fail_displayed")
             
             return <>
                 <div data-testid='level-error' className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Out of Bounds!</div>

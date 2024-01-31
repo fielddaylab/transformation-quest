@@ -31,6 +31,25 @@ export class BlockQueue {
     }
 }
 
+export const getSequenceData = blockQueue => {
+    let elements = []
+    for(let block of blockQueue) {
+        elements.push(getBlockData(block))
+    }
+    return elements;
+}
+
+export const getBlockData = block => {
+    let data = {}
+    data.block_id = block.id;
+    data.block_type = block.type;
+    if (block.type == BLOCK_TYPES.repeat) {
+        data.loop_subelements = getSequenceData(block.blockQueue.queue);
+    }
+    data.block_params = block.paramMap;
+    return data;
+}
+
 export const BLOCK_TYPES = {
     xTranslate: 'x-translate',
     yTranslate: 'y-translate',
@@ -71,6 +90,15 @@ export class Block {
         return blockDescriptionMap[this.type]
     }
 
+    get paramMap() {
+        let outParams = {}
+        for (let i = 0; i < this.description.length; i++) {
+            outParams[this.description[i]] = this.amounts[i]
+        }
+        return outParams;
+    }
+
+
     getTransformSteps() {
         return [this.transformGenerator(...this.amounts.map(a => Number(a)))]
     }
@@ -91,6 +119,14 @@ export class LoopBlock {
 
     get description() {
         return blockDescriptionMap[this.type]
+    }
+
+    get paramMap() {
+        let outParams = {}
+        for (let i = 0; i < this.description.length; i++) {
+            outParams[this.description[i]] = this.amounts[i]
+        }
+        return outParams
     }
 
     getTransformSteps() {

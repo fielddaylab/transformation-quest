@@ -1,8 +1,9 @@
 import React from 'react'
-import { Block, LoopBlock, BLOCK_TYPES } from '../model/blocks'
+import { Block, LoopBlock, BLOCK_TYPES, getSequenceData } from '../model/blocks'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import BlockSequenceBackground from '../assets/headerBar.svg'
 import RunButton from '../assets/runButton.svg'
+import { logEvent } from '../model/reactLogger'
 
 const LoopStep = ({ block, setEditLoop, focusLoop, removeInstruction, updateInstruction, disabled, index, forDroppable }) => {
   let loopDroppableName = forDroppable + '-' + index
@@ -41,7 +42,13 @@ const LoopStep = ({ block, setEditLoop, focusLoop, removeInstruction, updateInst
       <input
         className='myinput w-10 h-8 ml-3' data-testid={'step-input-' + loopDroppableName}
         disabled={disabled} name="loopAmount" min="2" value={block.amounts[0] + ''}
-        onChange={(e) => updateInstruction(block, new LoopBlock({ ...block, amounts: [e.target.value] }))}
+        onChange={(e) => {
+          if (block.isAmountValid()) {
+            let old = block.amounts[0];
+            logEvent('set_block_parameter', {'block_id': block.id, 'block_type': block.type, 'changed_param': block.description[0], 'old_value': old, 'new_value': e.target.value})
+          }
+          updateInstruction(block, new LoopBlock({ ...block, amounts: [e.target.value] }))
+        }}
       />
     </div>
 
@@ -61,7 +68,11 @@ const SingleStep = ({ block, removeInstruction, updateInstruction, disabled, ind
       disabled={disabled} name="translationAmount" min="1" value={amount + ''}
       onChange={e => {
         const amounts = [...block.amounts]
+        let old = amounts[i];
         amounts[i] = e.target.value
+        if (block.isAmountValid()) {
+          logEvent('set_block_parameter', {'block_id': block.id, 'block_type': block.type, 'changed_param': block.description[i], 'old_value': old, 'new_value': e.target.value})
+        }
         return updateInstruction(block, new Block({ ...block, amounts }))
       }}
     />
@@ -109,8 +120,11 @@ const InsertMaker = ({ onPress, focus }) =>
 
 const BlockSequence = ({ blocks, focusLoop, reorderInstructions, executeInstructions, setEditLoop, removeInstruction, updateInstruction, disabled }) => {
 
-  function reorderInstructionArray(blocks, moveFrom, moveTo) {
+  function reorderInstructionArray(blocks, moveFrom, moveTo, inLoop) {
     const [removed] = blocks.splice(moveFrom, 1)
+    console.log(removed);
+    logEvent("drag_block", {"block_id": removed.id, "from_index": moveFrom, "new_index": moveTo, "in_loop": inLoop, "loop_id": undefined, "block_type": removed.type, "block_params": removed.paramMap})
+    logEvent("sequence_updated", {'sequence_elements': getSequenceData(blocks)})
     blocks.splice(moveTo, 0, removed)
     return blocks
   }
@@ -133,11 +147,11 @@ const BlockSequence = ({ blocks, focusLoop, reorderInstructions, executeInstruct
     const moveFrom = dragEvent.source.index
     const moveTo = dragEvent.destination.index
     if (dragEvent.type === 'root') {
-      reorderInstructions(reorderInstructionArray(blocks, moveFrom, moveTo))
+      reorderInstructions(reorderInstructionArray(blocks, moveFrom, moveTo, false))
     }
     else {
       let loopBlock = findParentLoopBlockByDragId(dragEvent.type)
-      let newBlocks = reorderInstructionArray(loopBlock.blockQueue.queue, moveFrom, moveTo)
+      let newBlocks = reorderInstructionArray(loopBlock.blockQueue.queue, moveFrom, moveTo, true)
       let reorderedLoop = loopBlock.reorderBlocks(newBlocks)
       updateInstruction(loopBlock, reorderedLoop)
     }
