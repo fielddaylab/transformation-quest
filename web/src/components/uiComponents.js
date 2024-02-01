@@ -83,7 +83,7 @@ export const MissionButton = ({ children, style, className, ...rest }) =>
 
 export const HowToPlayModal = ({children, NextPage, PreviousPage, setHowToPlayPage, onClose}) => {
   logEvent("level_rules_displayed")
-  console.warn("TODO: add page index, rules text")
+  console.warn("TODO: level_rules_displayed, add page index, rules text")
   return <div className='z-50 flex items-start fixed inset-0 bg-missionModal justify-center items-center' style={{ fontFamily: 'sniglet' }}>
     <Frame initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} width='700px' height='550px' background=''>
       <div
@@ -97,7 +97,7 @@ export const HowToPlayModal = ({children, NextPage, PreviousPage, setHowToPlayPa
         {children}
         { PreviousPage && // if PreviousPage, add this button
           <button onClick={() => {
-            console.warn("TODO: show index player was at")
+            console.warn("TODO: click_level_rules_back, show index player was at")
             logEvent("click_level_rules_back")
             setHowToPlayPage(<PreviousPage onClose={onClose} setHowToPlayPage={setHowToPlayPage}/> )
           }} 
@@ -108,7 +108,7 @@ export const HowToPlayModal = ({children, NextPage, PreviousPage, setHowToPlayPa
         }
         { NextPage ?  // if NextPage, add this button...
           <button onClick={() => {
-            console.warn("TODO: show index player was at")
+            console.warn("TODO: click_level_rules_next, show index player was at")
             logEvent("click_level_rules_next")
             setHowToPlayPage(<NextPage onClose={onClose} setHowToPlayPage={setHowToPlayPage}/>)
           }} 
@@ -236,7 +236,7 @@ export const MissionModal = ({ children, onClose, pageIndex, className = '', cre
   
   const onCloseHowToPlay = () => {
     setHowToPlayPage(null) // on close, set the page to null
-    console.warn("TODO: add page index to click_level_rules_exit")
+    console.warn("TODO: click_level_rules_exit, add page index to click_level_rules_exit")
     logEvent("click_level_rules_exit")
     console.warn("TODO: click_level_rules_finish for last element")
   }
@@ -249,7 +249,6 @@ export const MissionModal = ({ children, onClose, pageIndex, className = '', cre
   let HowToPlay = creative ? HowToPlayCreative1 : HowToPlayRegular1
 
   const onClickRules = () => {
-    console.warn("TODO: click_display_level_rules")
     logEvent("click_display_level_rules")
     // create the first how to play page (reg or creative) and assign the base onClose function
     setHowToPlayPage(<HowToPlay onClose={onCloseHowToPlay} setHowToPlayPage={setHowToPlayPage} />)
@@ -257,7 +256,7 @@ export const MissionModal = ({ children, onClose, pageIndex, className = '', cre
 
   if (!howToPlayPage) {
     logEvent("level_mission_displayed")
-    console.warn("TODO: add displayed mission text")
+    console.warn("TODO: level_mission_displayed, add displayed mission text")
   }
 
   return howToPlayPage || // if a howToPlayPAge is set, use that, otherwise use this

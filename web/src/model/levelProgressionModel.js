@@ -1,4 +1,4 @@
-import LevelModel from "./levelModel"
+import LevelModel, { MEDALS } from "./levelModel"
 import _ from 'lodash'
 
 const isDev = process.env.REACT_APP_DEV
@@ -6,7 +6,6 @@ const isDev = process.env.REACT_APP_DEV
 export default class LevelProgression {
 
   constructor(obj) {
-    console.log("new levelProgression?")
     this.levels = obj.levels.map((level, i) => new LevelModel({ ...level, number: i + 1 }))
     this.hasCompletedGame = obj.hasCompletedGame || false
   }
@@ -35,4 +34,34 @@ export default class LevelProgression {
     return _.clamp(lastCompleteLevelIndex, -1, this.levels.length - 2) + 2
   }
 
+  get levelData() {
+    let list = [];
+    for (let i = 0; i < this.levels.length; i++) {
+      let status;
+      if (this.canPlay(i+1)) {
+        status = STATUS.AVAILABLE;
+        if (this.levels[i].acquiredMedals.includes(MEDALS.bronze)) status = STATUS.BRONZE;
+        if (this.levels[i].acquiredMedals.includes(MEDALS.silver)) status = STATUS.SILVER;
+        if (this.levels[i].acquiredMedals.includes(MEDALS.gold)) status = STATUS.GOLD;
+      } else {
+        status = STATUS.UNAVAILABLE;
+      }
+
+      list.push({
+        'level_name': this.levels[i].title,
+        'status': status
+      })
+    }
+    return list;
+  }
+
+}
+
+const STATUS = {
+  UNAVAILABLE: 'UNAVAILABLE',
+  AVAILABLE: 'AVAILABLE',
+  BRONZE: 'BRONZE',
+  SILVER: 'SILVER',
+  GOLD: 'GOLD'
+  
 }

@@ -196,7 +196,7 @@ const LevelContainer = ({ afterExecute, ...props }) => {
     // }
     
     const onClickMissionButton = () => {
-        console.warn("TODO: add timer to track number of seconds from mission open to close!");
+        console.warn("TODO: click_dismiss_mission add timer to track number of seconds from mission open to close!");
         if (missionModal) {
             logEvent("click_dismiss_mission")
         } else {
@@ -208,7 +208,7 @@ const LevelContainer = ({ afterExecute, ...props }) => {
     const onClickReplayButton = () => {
         // console.log("Replay level");
         logEvent("click_replay_level");
-        console.warn("TODO: add timer for number of seconds feedback was open")
+        console.warn("TODO: dismiss_sequence_feedback, add timer for number of seconds feedback was open")
         logEvent("dismiss_sequence_feedback")
         restart();
     }
@@ -216,7 +216,7 @@ const LevelContainer = ({ afterExecute, ...props }) => {
     const onClickNextLevelButton = () => {
         // console.log("Next level");
         logEvent("click_next_level")
-        console.warn("TODO: add timer for number of seconds feedback was open")
+        console.warn("TODO: dismiss_sequence_feedback add timer for number of seconds feedback was open")
         logEvent("dismiss_sequence_feedback")
         goToSelectionPage()
     }
@@ -255,14 +255,14 @@ const LevelContainer = ({ afterExecute, ...props }) => {
         if (!levelModel.complete) return null
 
         if (levelModel.error) {
-            console.warn("TODO: sequence fail, show failure data")
+            console.warn("TODO: sequence_fail_displayed, show failure data")
             logEvent("sequence_fail_displayed")
             
             return <>
                 <div data-testid='level-error' className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Out of Bounds!</div>
                 <div className="mt-5 text-lg text-mineShaft mb-16 text-center">{levelModel.error.message}</div>
                 <RestartButton onClick={() => {
-                    console.warn("TODO: add timer for number of seconds feedback was open")
+                    console.warn("TODO: dismiss_sequence_feedback add timer for number of seconds feedback was open")
                     logEvent("dismiss_sequence_feedback")
                     restart();
                     }} />
@@ -271,13 +271,13 @@ const LevelContainer = ({ afterExecute, ...props }) => {
 
 
         if (levelModel.obstacleHit) {
-            console.warn("TODO: sequence fail, show failure data")
-            logEvent("sequence_fail_displayed")
+            console.warn("TODO: sequence_fail_displayed, log collected items")
+            logEvent("sequence_fail_displayed", {'outcome': 'COLLISION', 'outcome_title': 'Collision!', 'outcome_text': errors.hitObstacle, 'moves_count': levelModel.numberOfMoves, 'level_shields': levelModel.acquiredMedals})
             return <>
                 <div data-testid='obstacle-hit-modal' className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Collision!</div>
                 <div className="mt-5 text-lg text-mineShaft mb-16">{errors.hitObstacle}</div>
                 <RestartButton onClick={() => {
-                    console.warn("TODO: add timer for number of seconds feedback was open")
+                    console.warn("TODO: dismiss_sequence_feedback, timer for number of seconds feedback was open")
                     logEvent("dismiss_sequence_feedback")
                     restart();
                     }} />
@@ -286,7 +286,7 @@ const LevelContainer = ({ afterExecute, ...props }) => {
 
 
         if (levelModel.won && levelModel.medal) {
-            console.warn("TODO: sequence success, show success data")
+            console.warn("TODO: sequence_success_displayed, show success data")
             logEvent("sequence_success_displayed")
             // console.log("Level complete")
             logEvent("level_complete")

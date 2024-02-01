@@ -74,9 +74,8 @@ const LevelSelector = ({ levelProgression }) => {
   if(gameComplete) levelProgression.hasCompletedGame = true
   let sessionId = getSessionId()
 
-  logEvent("navigation_displayed");
-  console.warn("TODO: navigation display, all available levels");
-  
+  logEvent("navigation_displayed", {'levels': levelProgression.levelData});
+
   const onClickLevel = (number, acquiredMedals) => {
     // console.log(levelProgression.levels);
     logEvent("select_level", {level: number, level_shields: [...acquiredMedals]});
