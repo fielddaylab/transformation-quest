@@ -45,7 +45,7 @@ const LoopStep = ({ block, setEditLoop, focusLoop, removeInstruction, updateInst
         onChange={(e) => {
           if (block.isAmountValid()) {
             let old = block.amounts[0];
-            logEvent('set_block_parameter', {'block_id': block.id, 'block_type': block.type, 'changed_param': block.description[0], 'old_value': old, 'new_value': e.target.value})
+            logEvent('set_block_parameter', {'block_type': block.type, 'changed_param': block.description[0], 'old_value': old, 'new_value': e.target.value})
           }
           updateInstruction(block, new LoopBlock({ ...block, amounts: [e.target.value] }))
         }}
@@ -71,7 +71,7 @@ const SingleStep = ({ block, removeInstruction, updateInstruction, disabled, ind
         let old = amounts[i];
         amounts[i] = e.target.value
         if (block.isAmountValid()) {
-          logEvent('set_block_parameter', {'block_id': block.id, 'block_type': block.type, 'changed_param': block.description[i], 'old_value': old, 'new_value': e.target.value})
+          logEvent('set_block_parameter', {'block_type': block.type, 'changed_param': block.description[i], 'old_value': old, 'new_value': e.target.value})
         }
         return updateInstruction(block, new Block({ ...block, amounts }))
       }}
@@ -123,7 +123,7 @@ const BlockSequence = ({ blocks, focusLoop, reorderInstructions, executeInstruct
   function reorderInstructionArray(blocks, moveFrom, moveTo, inLoop) {
     const [removed] = blocks.splice(moveFrom, 1)
     console.log(removed);
-    logEvent("drag_block", {"block_id": removed.id, "from_index": moveFrom, "new_index": moveTo, "in_loop": inLoop, "loop_id": undefined, "block_type": removed.type, "block_params": removed.paramMap})
+    logEvent("drag_block", {"from_index": moveFrom, "new_index": moveTo, "in_loop": inLoop, "loop_id": undefined, "block_type": removed.type, "block_params": removed.paramMap})
     logEvent("sequence_updated", {'sequence_elements': getSequenceData(blocks)})
     blocks.splice(moveTo, 0, removed)
     return blocks

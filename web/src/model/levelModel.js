@@ -61,6 +61,7 @@ export default class LevelModel {
         this.description = obj.description
         this.creative = obj.creative
         this.blockQueue = obj.blockQueue || new BlockQueue()
+        this.stepType = obj.stepType
         this.executionStep = obj.executionStep
         this.editLoop = obj.editLoop
         this.endGoal = obj.endGoal
@@ -102,6 +103,7 @@ export default class LevelModel {
         const [contains, excludes] = _.partition(obj.rewards || [], reward => this.playerToken.doesContain(reward))
         this.rewards = excludes
         this.collectedRewards = contains.concat(obj.collectedRewards || [])
+        this.newRewards = contains || [];
         this.medalCriteria = obj.medalCriteria || []
         this.acquiredMedals = obj.acquiredMedals || []
         this.complete = obj.complete || this.obstacleHit || this.error
@@ -126,7 +128,7 @@ export default class LevelModel {
     addBlock(block) {
         logEvent("select_new_block", {"block_type": block.type, "block_params": block.paramMap})
         if (block.type !== BLOCK_TYPES.repeat && !this.availableBlocks.includes(block.type)) {
-            throw new Error('Bad, you are not allowed to add a block of type: ' + block.id + ' because this level model only has these allowed blocks: ' + this.availableBlocks)
+            throw new Error('Bad, you are not allowed to add a block of type: ' + block.type + ' because this level model only has these allowed blocks: ' + this.availableBlocks)
         }
         if (this.editLoop && !this.blockQueue.queue.includes(this.editLoop)) {
             // editLoop exists but is not in the queue - don't add anything to it
@@ -134,20 +136,18 @@ export default class LevelModel {
         }
         let blockQueue = this.blockQueue;
         let inLoop = false;
-        let loopId;
 
         let blockIndex = -1;
         if (this.editLoop) {
             this.editLoop.addBlock(block);
             inLoop = true;
-            loopId = this.editLoop.id
             blockIndex = this.editLoop.blockQueue.queue.indexOf(block);
         } else {
             blockQueue = this.blockQueue.addBlock(block);
             blockIndex = blockQueue.queue.indexOf(block)
         }
 
-        logEvent("add_new_block", {"block_id": block.id, "block_index": blockIndex, "in_loop": inLoop, "loop_id": loopId, "block_type": block.type, "block_params": block.paramMap})
+        logEvent("add_new_block", {"block_index": blockIndex, "in_loop": inLoop, "block_type": block.type, "block_params": block.paramMap})
         logEvent("sequence_updated", {'sequence_elements': getSequenceData(blockQueue.queue)})
         return new LevelModel({ ...this, blockQueue, editLoop: block.type === BLOCK_TYPES.repeat ? block : this.editLoop })
     }
@@ -166,6 +166,10 @@ export default class LevelModel {
 
     numberOfGemsCollected(type) {
         return REWARDS[type] && this.collectedRewards.filter((reward) => reward.type === type).length
+    }
+
+    gemJustCollected(type) {
+        return REWARDS[type] && this.newRewards.some((reward) => reward.type === type)
     }
 
     getStampScore() {
@@ -188,6 +192,22 @@ export default class LevelModel {
         return this.blockQueue.queue.filter(block => block instanceof type).length
     }
 
+    judgeOutcome() {
+        if (this.won) return OUTCOME.GOAL;
+        if (this.obstacleHit) return OUTCOME.MONSTER;
+        if (this.error) return OUTCOME.OUT_OF_BOUNDS;
+        if (this.newRewards) {
+            if (this.gemJustCollected(REWARDS.blue)) return OUTCOME.GEM_BLUE;
+            if (this.gemJustCollected(REWARDS.yellow)) return OUTCOME.GEM_YELLOW;
+        }
+        let newStamp = this.stamps.find(stamp => this.playerToken.matches(stamp));
+        if (newStamp) {
+            if (newStamp.value > 1) return OUTCOME.STAMP_2_POINT
+            return OUTCOME.STAMP_1_POINT
+        }
+        return OUTCOME.NONE;
+    }
+
     containsLoop() {
         return this.blockQueue.queue.some(block => block instanceof LoopBlock)
     }
@@ -196,12 +216,25 @@ export default class LevelModel {
         if (this.blockQueue.queue.length === 0) throw new Error(errors.noTransforms)
         const models = []
         let model = this
-        const steps = this.blockQueue.getStepsFromQueue()
+        let list = this.blockQueue.getStepsFromQueue();
+        const steps = list.transforms;
+        const stepTypes = list.types;
         for (let i = 0; i < steps.length && !model.complete; i++) {
-            model = new LevelModel({ ...model, executionStep: i, step: steps[i], complete: i === steps.length - 1 })
+            model = new LevelModel({ ...model, executionStep: i, step: steps[i], stepType: stepTypes[i], complete: i === steps.length - 1 })
             models.push(model)
         }
         return models
     }
 
+}
+
+const OUTCOME = {
+    NONE: 'NONE',
+    OUT_OF_BOUNDS: 'OUT_OF_BOUNDS',
+    MONSTER: 'MONSTER',
+    STAMP_1_POINT: 'STAMP_1_POINT',
+    STAMP_2_POINT: 'STAMP_2_POINT',
+    GEM_YELLOW: 'GEM_YELLOW',
+    GEM_BLUE: 'GEM_BLUE',
+    GOAL: 'GOAL'
 }

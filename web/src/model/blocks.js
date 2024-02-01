@@ -27,7 +27,12 @@ export class BlockQueue {
     }
 
     getStepsFromQueue() {
-        return _.flatMap(this.queue, block => block.getTransformSteps())
+        let transforms = _.flatMap(this.queue, block => block.getTransformSteps())
+        let types = _.flatMap(this.queue, block => block.getStepType())
+        return {
+            'transforms': transforms,
+            'types': types,
+        }
     }
 }
 
@@ -41,7 +46,7 @@ export const getSequenceData = blockQueue => {
 
 export const getBlockData = block => {
     let data = {}
-    data.block_id = block.id;
+    // data.block_id = block.id;
     data.block_type = block.type;
     if (block.type === BLOCK_TYPES.repeat) {
         data.loop_subelements = getSequenceData(block.blockQueue.queue);
@@ -103,6 +108,10 @@ export class Block {
         return [this.transformGenerator(...this.amounts.map(a => Number(a)))]
     }
 
+    getStepType() {
+        return this.type;
+    }
+
     isAmountValid() {
         return this.amounts.map(a => a + '').every(a => a.match(/^-?[0-9]+$/g))
     }
@@ -130,7 +139,11 @@ export class LoopBlock {
     }
 
     getTransformSteps() {
-        return _.flatMap(_.range(this.amounts[0]), () => this.blockQueue.getStepsFromQueue())
+        return _.flatMap(_.range(this.amounts[0]), () => this.blockQueue.getStepsFromQueue().transforms)
+    }
+
+    getStepType() {
+        return _.flatMap(_.range(this.amounts[0]), () => this.blockQueue.getStepsFromQueue().types);
     }
 
     addBlock(block) {
@@ -216,3 +229,4 @@ export const createReflectYWithLine = () => new Block({
 })
 
 export const createLoop = iterations => new LoopBlock({ amounts: [iterations] })
+

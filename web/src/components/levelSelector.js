@@ -76,11 +76,9 @@ const LevelSelector = ({ levelProgression }) => {
 
   logEvent("navigation_displayed");
   console.warn("TODO: navigation display, all available levels");
+  
   const onClickLevel = (number, acquiredMedals) => {
     // console.log(levelProgression.levels);
-    console.log(acquiredMedals);
-    console.log("level clicked, got level " + number + " with " + [...acquiredMedals]);
-    // TODO: verify shield fetch
     logEvent("select_level", {level: number, level_shields: [...acquiredMedals]});
     history.push('/level/' + number)
   }

@@ -105,16 +105,15 @@ const LevelContainer = ({ afterExecute, ...props }) => {
     const nextModelView = models => {
         if (models.length) {
             if (models.length === 1 && afterExecute) afterExecute(models[0])
-            setLevelModel(models[0])
-            console.warn("TODO sequence step: type, outcome");
-            console.log(levelModel.step);
+            let newModel = models[0]
+            setLevelModel(newModel)
             logEvent("sequence_execution_step", {
-                'type': levelModel.step, 
-                'moves_count': levelModel.numberOfMoves + 1, 
-                'blue_gems': levelModel.numberOfGemsCollected(REWARDS.blue), 
-                'yellow_gems': levelModel.numberOfGemsCollected(REWARDS.yellow), 
-                'stamp_points': levelModel.getStampScore(), 
-                'outcome': null});
+                'type': newModel.stepType, 
+                'moves_count': newModel.numberOfMoves, 
+                'blue_gems': newModel.numberOfGemsCollected(REWARDS.blue), 
+                'yellow_gems': newModel.numberOfGemsCollected(REWARDS.yellow), 
+                'stamp_points': newModel.getStampScore(), 
+                'outcome': newModel.judgeOutcome()});
             setExecutionView(models.filter((_, i) => i > 0))
         }
     }
@@ -177,19 +176,18 @@ const LevelContainer = ({ afterExecute, ...props }) => {
 
         let editLoop = filterBlock(levelModel.editLoop) ? levelModel.editLoop : undefined
         let inLoop = false;
-        let loopId;
 
         if (blockIndex !== -1) {
             blocks = new BlockQueue(levelModel.blockQueue.queue.filter(filterBlock))
             setLevelModel(new LevelModel({ ...levelModel, blockQueue: blocks, editLoop }))
+            blocks = blocks.queue
         }
         else {
             const newModel = checkForLoopsContainingBlock(blocks)
             inLoop = true;
-            loopId = editLoop && editLoop.id;
             setLevelModel(new LevelModel({ ...newModel}))
         }
-        logEvent("delete_block", {"block_id": rBlock.id, "block_index": blockIndex, "in_loop": inLoop, "loop_id": loopId, "block_type": rBlock.type, "block_params": rBlock.paramMap})
+        logEvent("delete_block", {"block_index": blockIndex, "in_loop": inLoop, "block_type": rBlock.type, "block_params": rBlock.paramMap})
         logEvent("sequence_updated", {'sequence_elements': getSequenceData(blocks)})
     }
 
