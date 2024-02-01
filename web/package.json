@@ -49,6 +49,7 @@
     "build:css": "postcss src/styles/index.css -o src/index.css",
     "watch:css": "postcss src/styles/index.css -o src/index.css -w"
   },
+  "homepage": ".",
   "eslintConfig": {
     "extends": "react-app"
   },
