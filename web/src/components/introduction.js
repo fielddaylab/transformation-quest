@@ -58,9 +58,6 @@ const Monster = ({ children, className, monster, style, ...rest }) => <div
 const Introduction = () => {
     let history = useHistory()
     const [activeIndex, setActiveIndex] = useState(0)
-
-    logEvent("tutorial_displayed", {tutorial_index: activeIndex, tutorial_text: textMap[activeIndex]})
-    console.log(textMap[activeIndex])
     
     const onClickForward = () => {
         // console.log("Clicked forward from index " + activeIndex)
@@ -72,6 +69,8 @@ const Introduction = () => {
         logEvent("click_tutorial_back", {from_index: activeIndex})
         setActiveIndex(activeIndex - 1)
     }
+
+    logEvent("tutorial_displayed", {tutorial_index: activeIndex, tutorial_text: getReactElementText(textMap[activeIndex])})
 
     return <div className='h-screen' style={{ backgroundColor: '#71C0CE' }}>
         <div className='mx-3 pt-32 text-storyWhite flex justify-center items-center' style={{ zIndex: 1 }}>
@@ -124,6 +123,17 @@ const Introduction = () => {
             </Bubble>
         </div>
     </div>
+}
+
+// https://stackoverflow.com/a/63173682
+export const getReactElementText = (element) => {
+    if (!element) return ''
+    if (typeof element === 'string') return element;
+    const children = element.props && element.props.children;
+    if (children instanceof Array) {
+        return children.map(getReactElementText).join('');
+    }
+    return getReactElementText(children)
 }
 
 export default Introduction

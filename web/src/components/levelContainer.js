@@ -89,6 +89,7 @@ const LevelContainer = ({ afterExecute, ...props }) => {
     let history = useHistory()
     const [levelModel, setLevelModel] = useState(props.levelModel)
     const [missionModal, setMissionModal] = useState(props.levelModel.acquiredMedals.length === 0)
+    const [pageIndex, setPageIndex] = useState(0)
     const [executionView, setExecutionView] = useState([])
     const [openSideMenuIndex, setOpenSideMenuIndex] = useState(null)
     const toggleSideMenuAt = i => setOpenSideMenuIndex(openSideMenuIndex === i ? null : i)
@@ -245,8 +246,11 @@ const LevelContainer = ({ afterExecute, ...props }) => {
             logEvent("dismiss_objective")
             console.warn("TODO: dismiss_legend, add open duration timer")
         } else {
-            logEvent("objectives_displayed")
-            console.warn("TODO: objectives_displayed add text content")
+            logEvent("objectives_displayed", {
+                bronze_objective_text: levelModel.medalCriteria[0].description,
+                silver_objective_text: levelModel.medalCriteria[1].description,
+                gold_objective_text: levelModel.medalCriteria[2].description
+            })
         }
         toggleSideMenuAt(1)
     }
@@ -254,9 +258,16 @@ const LevelContainer = ({ afterExecute, ...props }) => {
     const completedContent = (() => {
         if (!levelModel.complete) return null
 
+        const rewards = {
+            blue_gems: levelModel.numberOfGemsCollected(REWARDS.blue),
+            yellow_gems: levelModel.numberOfGemsCollected(REWARDS.yellow),
+            stamp_points: levelModel.getStampScore()
+        }
+
         if (levelModel.error) {
-            console.warn("TODO: sequence_fail_displayed, show failure data")
-            logEvent("sequence_fail_displayed")
+            const failTitle = "Out of Bounds!";
+            const failText = levelModel.error.message;
+            logEvent("sequence_fail_displayed", {outcome: "OUT_OF_BOUNDS", outcome_title: failTitle, outcome_text: failText,  moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals, collected_items: rewards})
             
             return <>
                 <div data-testid='level-error' className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Out of Bounds!</div>
@@ -271,8 +282,7 @@ const LevelContainer = ({ afterExecute, ...props }) => {
 
 
         if (levelModel.obstacleHit) {
-            console.warn("TODO: sequence_fail_displayed, log collected items")
-            logEvent("sequence_fail_displayed", {'outcome': 'COLLISION', 'outcome_title': 'Collision!', 'outcome_text': errors.hitObstacle, 'moves_count': levelModel.numberOfMoves, 'level_shields': levelModel.acquiredMedals})
+            logEvent("sequence_fail_displayed", {outcome: 'COLLISION', outcome_title: 'Collision!', outcome_text: errors.hitObstacle, moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals})
             return <>
                 <div data-testid='obstacle-hit-modal' className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Collision!</div>
                 <div className="mt-5 text-lg text-mineShaft mb-16">{errors.hitObstacle}</div>
@@ -286,21 +296,31 @@ const LevelContainer = ({ afterExecute, ...props }) => {
 
 
         if (levelModel.won && levelModel.medal) {
-            console.warn("TODO: sequence_success_displayed, show success data")
-            logEvent("sequence_success_displayed")
+            const wonTitle = "Shield achieved:"
+            const wonDetail = "Advance to the next level, or play this level again for a higher score."
+            const rewards = {
+                blue_gems: levelModel.numberOfGemsCollected(REWARDS.blue),
+                yellow_gems: levelModel.numberOfGemsCollected(REWARDS.yellow),
+                stamp_points: levelModel.getStampScore()
+            }
+            logEvent("sequence_success_displayed", {outcome: levelModel.medal, outcome_title: wonTitle, outcome_text: wonDetail, moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals, collected_items: rewards})
             // console.log("Level complete")
             logEvent("level_complete")
             return <>
-                <div data-testid='won-modal' className='text-cerulean text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Shield achieved:</div>
+                <div data-testid='won-modal' className='text-cerulean text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>{wonTitle}</div>
                 <Medal medal={shieldMap[levelModel.medal]} />
-                <div className="text-lg text-mineShaft">Advance to the next level, or play this level again for a higher score.</div>
+                <div className="text-lg text-mineShaft">{wonDetail}</div>
                 <AdvanceLevelButton onClick={onClickNextLevelButton} />
                 <PlayAgainButton onClick={onClickReplayButton} />
             </>
         }
 
+        const failTitle = "Keep trying!";
+        const failText = "You must achieve a Bronze medal in order to advance to the next level."
+        logEvent("sequence_fail_displayed", {outcome: "FAILED_OBJECTIVE", outcome_title: failTitle, outcome_text: failText,  moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals, collected_items: rewards})
+        
         return <>
-            <div className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Keep trying!</div>
+            <div className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>{failTitle}</div>
             <div data-testid='not-won-modal' className="text-lg text-mineShaft text-center">You must achieve a Bronze<br />medal in order to advance<br />to the next level.</div>
             {levelModel.medalCriteria[0] && <div className="text-md my-2 py-2 px-4 bg-gallery text-mineShaft">
                 <div className='font-semibold inline'>BRONZE: </div> {levelModel.medalCriteria[0].description}
@@ -315,7 +335,7 @@ const LevelContainer = ({ afterExecute, ...props }) => {
 
         {completedContent && <Feedback style={{ fontFamily: 'sniglet' }}>{completedContent}</Feedback>}
 
-        {(missionModal && storyText) && <MissionModal onClose={() => setMissionModal(false)} data-testid='mission-modal' creative={levelModel.creative}>
+        {(missionModal && storyText) && <MissionModal onClose={() => setMissionModal(false)} data-testid='mission-modal' creative={levelModel.creative} storyText={storyText}>
             <div className="flex flex-col items-center px-16 text-xl" style={{ whiteSpace: 'pre-line' }}>{storyText}</div>
         </MissionModal>}
 

@@ -20,6 +20,7 @@ import HtpCreative2 from '../assets/how-to-play/creative-2.png'
 
 import { logEvent } from '../model/reactLogger'
 import { Frame } from "framer"
+import { getReactElementText } from './introduction'
 
 export const TitleButton = ({ children, style, className, ...rest }) => <div
   {...rest}
@@ -81,9 +82,9 @@ export const MissionButton = ({ children, style, className, ...rest }) =>
     {children}
   </div>
 
-export const HowToPlayModal = ({children, NextPage, PreviousPage, setHowToPlayPage, onClose}) => {
-  logEvent("level_rules_displayed")
-  console.warn("TODO: level_rules_displayed, add page index, rules text")
+export const HowToPlayModal = ({children, NextPage, PreviousPage, setHowToPlayPage, pageIndex, onClose}) => {
+  const divText = getReactElementText(children);
+  logEvent("level_rules_displayed", {rules_index: pageIndex, rules_text: divText})
   return <div className='z-50 flex items-start fixed inset-0 bg-missionModal justify-center items-center' style={{ fontFamily: 'sniglet' }}>
     <Frame initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} width='700px' height='550px' background=''>
       <div
@@ -93,13 +94,13 @@ export const HowToPlayModal = ({children, NextPage, PreviousPage, setHowToPlayPa
           backgroundSize: '100% 100%',
         }}
       >
-        <button onClick={onClose} className='absolute top-0 right-0 mt-4 mr-12 text-4xl'>x</button>
+        <button onClick={() => onClose(pageIndex)} className='absolute top-0 right-0 mt-4 mr-12 text-4xl'>x</button>
         {children}
         { PreviousPage && // if PreviousPage, add this button
           <button onClick={() => {
-            console.warn("TODO: click_level_rules_back, show index player was at")
-            logEvent("click_level_rules_back")
-            setHowToPlayPage(<PreviousPage onClose={onClose} setHowToPlayPage={setHowToPlayPage}/> )
+            logEvent("click_level_rules_back", {from_index: pageIndex})
+            pageIndex--;
+            setHowToPlayPage(<PreviousPage onClose={onClose} setHowToPlayPage={setHowToPlayPage} pageIndex={pageIndex}/> )
           }} 
             className='absolute bottom-0 left-0 mb-6 ml-6 text-x1'
             style={{ backgroundImage: `url(${cuteButton})`, width: '144px', height: '67px', zIndex: 3, cursor: 'pointer', backgroundRepeat: 'no-repeat', backgroundSize: 'cover' }}>
@@ -108,16 +109,19 @@ export const HowToPlayModal = ({children, NextPage, PreviousPage, setHowToPlayPa
         }
         { NextPage ?  // if NextPage, add this button...
           <button onClick={() => {
-            console.warn("TODO: click_level_rules_next, show index player was at")
-            logEvent("click_level_rules_next")
-            setHowToPlayPage(<NextPage onClose={onClose} setHowToPlayPage={setHowToPlayPage}/>)
+            logEvent("click_level_rules_next", {from_index: pageIndex})
+            pageIndex++;
+            setHowToPlayPage(<NextPage onClose={onClose} setHowToPlayPage={setHowToPlayPage} pageIndex={pageIndex}/>)
           }} 
             className='absolute bottom-0 right-0 mb-6 mr-6 text-x1'
             style={{ backgroundImage: `url(${cuteButton})`, fontFamily: 'Sniglet', width: '144px', height: '67px', zIndex: 3, cursor: 'pointer', backgroundRepeat: 'no-repeat', backgroundSize: 'cover' }}>
               Next
           </button>
           : // else add this button
-          <button onClick={onClose} 
+          <button onClick={() => {
+            onClose(pageIndex);
+            logEvent("click_level_rules_finish")
+          }} 
             className='absolute bottom-0 right-0 mb-6 mr-6 text-x1'
             style={{ backgroundImage: `url(${continueButton})`, fontFamily: 'Sniglet', width: '144px', height: '67px', cursor: 'pointer', backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
               Ok!
@@ -129,8 +133,8 @@ export const HowToPlayModal = ({children, NextPage, PreviousPage, setHowToPlayPa
   </div >
 }
 
-export const HowToPlayRegular1 = ({setHowToPlayPage, onClose}) => 
-  <HowToPlayModal NextPage={HowToPlayRegular2} setHowToPlayPage={setHowToPlayPage} onClose={onClose}>
+export const HowToPlayRegular1 = ({setHowToPlayPage, pageIndex, onClose}) => 
+  <HowToPlayModal NextPage={HowToPlayRegular2} setHowToPlayPage={setHowToPlayPage} pageIndex={pageIndex} onClose={onClose}>
     <div className="flex flex-col items-center px-16 text-xl pb-16" style={{ whiteSpace: 'pre-line' }}>
       <div className="text-center">Place the <span style={{color: "red"}}> RED </span> triangle in the <span style={{color: "red"}}> EXIT </span> by creating and running a block sequence.</div>
       <img src={HtpNormal1} alt=""/>
@@ -138,8 +142,8 @@ export const HowToPlayRegular1 = ({setHowToPlayPage, onClose}) =>
   </HowToPlayModal>
 
 
-export const HowToPlayRegular2 = ({setHowToPlayPage, onClose}) =>
-  <HowToPlayModal PreviousPage={HowToPlayRegular1} NextPage={HowToPlayRegular3} setHowToPlayPage={setHowToPlayPage} onClose={onClose}>
+export const HowToPlayRegular2 = ({setHowToPlayPage, pageIndex, onClose}) =>
+  <HowToPlayModal PreviousPage={HowToPlayRegular1} NextPage={HowToPlayRegular3} setHowToPlayPage={setHowToPlayPage} pageIndex={pageIndex} onClose={onClose}>
     <div className="flex flex-col items-center px-32 text-xl pb-16" style={{ whiteSpace: 'pre-line' }}>
       <div className="text-center">
         Before you begin each level, click on the 
@@ -149,8 +153,8 @@ export const HowToPlayRegular2 = ({setHowToPlayPage, onClose}) =>
     </div>
   </HowToPlayModal>
 
-export const HowToPlayRegular3 = ({setHowToPlayPage, onClose}) =>
-  <HowToPlayModal PreviousPage={HowToPlayRegular2} NextPage={HowToPlayRegular4} setHowToPlayPage={setHowToPlayPage} onClose={onClose}>
+export const HowToPlayRegular3 = ({setHowToPlayPage, pageIndex, onClose}) =>
+  <HowToPlayModal PreviousPage={HowToPlayRegular2} NextPage={HowToPlayRegular4} setHowToPlayPage={setHowToPlayPage} pageIndex={pageIndex} onClose={onClose}>
     <div className="flex flex-col items-center px-32 text-xl pb-16" style={{ whiteSpace: 'pre-line' }}>
       <div className="text-center">
         Avoid the <span style={{color: "purple"}}> ENEMIES </span> and get the colored
@@ -161,8 +165,8 @@ export const HowToPlayRegular3 = ({setHowToPlayPage, onClose}) =>
     </div>
   </HowToPlayModal>
 
-export const HowToPlayRegular4 = ({setHowToPlayPage, onClose}) =>
-  <HowToPlayModal PreviousPage={HowToPlayRegular3} setHowToPlayPage={setHowToPlayPage} onClose={onClose}>
+export const HowToPlayRegular4 = ({setHowToPlayPage, pageIndex, onClose}) =>
+  <HowToPlayModal PreviousPage={HowToPlayRegular3} setHowToPlayPage={setHowToPlayPage} pageIndex={pageIndex} onClose={onClose}>
     <div className="flex flex-col items-center px-32 text-xl pb-16" style={{ whiteSpace: 'pre-line' }}>
       <div className="text-center">
         Collect the <span style={{color: "#bf712b"}}> SHIELDS </span> to protect the people of Adanac
@@ -184,8 +188,8 @@ export const HowToPlayRegular4 = ({setHowToPlayPage, onClose}) =>
   </HowToPlayModal>
 
 
-export const HowToPlayCreative1 = ({setHowToPlayPage, onClose}) => 
-  <HowToPlayModal NextPage={HowToPlayCreative2} setHowToPlayPage={setHowToPlayPage} onClose={onClose}>
+export const HowToPlayCreative1 = ({setHowToPlayPage, pageIndex, onClose}) => 
+  <HowToPlayModal NextPage={HowToPlayCreative2} setHowToPlayPage={setHowToPlayPage} pageIndex={pageIndex} onClose={onClose}>
     <div className="flex flex-col items-center py-16 px-16 text-xl" style={{ whiteSpace: 'pre-line' }}>
       <div className="text-center">
         Landing on a <span style={{color: "#ffbe1c"}}> YELLOW triangle gives you 2 points</span> and landing on a 
@@ -198,8 +202,8 @@ export const HowToPlayCreative1 = ({setHowToPlayPage, onClose}) =>
   </HowToPlayModal>
 
 
-export const HowToPlayCreative2 = ({setHowToPlayPage, onClose}) =>
-  <HowToPlayModal PreviousPage={HowToPlayCreative1} NextPage={HowToPlayCreative3} setHowToPlayPage={setHowToPlayPage} onClose={onClose}>
+export const HowToPlayCreative2 = ({setHowToPlayPage, pageIndex, onClose}) =>
+  <HowToPlayModal PreviousPage={HowToPlayCreative1} NextPage={HowToPlayCreative3} pageIndex={pageIndex}  setHowToPlayPage={setHowToPlayPage} onClose={onClose}>
     <div className="flex flex-col items-center px-32 text-xl pb-16" style={{ whiteSpace: 'pre-line' }}>
       <div className="text-center">
         Before you begin each level, click on the 
@@ -209,8 +213,8 @@ export const HowToPlayCreative2 = ({setHowToPlayPage, onClose}) =>
     </div>
   </HowToPlayModal>
 
-export const HowToPlayCreative3 = ({setHowToPlayPage, onClose}) =>
-  <HowToPlayModal PreviousPage={HowToPlayCreative2} setHowToPlayPage={setHowToPlayPage} onClose={onClose}>
+export const HowToPlayCreative3 = ({setHowToPlayPage, pageIndex, onClose}) =>
+  <HowToPlayModal PreviousPage={HowToPlayCreative2} setHowToPlayPage={setHowToPlayPage} pageIndex={pageIndex} onClose={onClose}>
     <div className="flex flex-col items-center px-32 text-xl pb-16" style={{ whiteSpace: 'pre-line' }}>
       <div className="text-center">
         Collect the <span style={{color: "#bf712b"}}> SHIELDS </span> to protect the people of Adanac
@@ -231,19 +235,19 @@ export const HowToPlayCreative3 = ({setHowToPlayPage, onClose}) =>
     </div>
   </HowToPlayModal>
 
-export const MissionModal = ({ children, onClose, pageIndex, className = '', creative, ...rest }) => {
+export const MissionModal = ({ children, onClose, className = '', creative, storyText, ...rest }) => {
   let [howToPlayPage, setHowToPlayPage] = useState(null)
-  
-  const onCloseHowToPlay = () => {
+  let pageIndex = 1;
+
+  const onCloseHowToPlay = (page) => {
     setHowToPlayPage(null) // on close, set the page to null
-    console.warn("TODO: click_level_rules_exit, add page index to click_level_rules_exit")
-    logEvent("click_level_rules_exit")
-    console.warn("TODO: click_level_rules_finish for last element")
+    // if (!page) return;
+    logEvent("click_level_rules_exit", {from_index: page})
   }
 
   const onClickPlay = () => {
     logEvent("click_level_play")
-    onClose();
+    onClose(null);
   }
 
   let HowToPlay = creative ? HowToPlayCreative1 : HowToPlayRegular1
@@ -251,15 +255,14 @@ export const MissionModal = ({ children, onClose, pageIndex, className = '', cre
   const onClickRules = () => {
     logEvent("click_display_level_rules")
     // create the first how to play page (reg or creative) and assign the base onClose function
-    setHowToPlayPage(<HowToPlay onClose={onCloseHowToPlay} setHowToPlayPage={setHowToPlayPage} />)
+    setHowToPlayPage(<HowToPlay onClose={page => onCloseHowToPlay(page)} setHowToPlayPage={setHowToPlayPage} pageIndex={pageIndex} />)
   }
 
   if (!howToPlayPage) {
-    logEvent("level_mission_displayed")
-    console.warn("TODO: level_mission_displayed, add displayed mission text")
+    logEvent("level_mission_displayed", {mission_text: storyText})
   }
 
-  return howToPlayPage || // if a howToPlayPAge is set, use that, otherwise use this
+  return howToPlayPage || // if a howToPlayPage is set, use that, otherwise use this
   <div className='z-30 flex items-start fixed inset-0 bg-missionModal justify-center items-center' style={{ fontFamily: 'sniglet' }}>
     <Frame initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.5 }} width='450px' height='550px' background=''>
       <div
