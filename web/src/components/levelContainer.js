@@ -22,7 +22,7 @@ import { MissionButton, MissionModal, RestartButton, PlayAgainButton, AdvanceLev
 import { storyMap } from '../levelData'
 import { Frame } from "framer"
 import BackToMap from "../assets/backtoMap.svg"
-import { logEvent } from '../model/reactLogger'
+import { TIMERS, logEvent, logTime, secsSinceLast } from '../model/reactLogger'
 
 const shieldMap = {
     [MEDALS.bronze]: BronzeShield,
@@ -89,7 +89,6 @@ const LevelContainer = ({ afterExecute, ...props }) => {
     let history = useHistory()
     const [levelModel, setLevelModel] = useState(props.levelModel)
     const [missionModal, setMissionModal] = useState(props.levelModel.acquiredMedals.length === 0)
-    const [pageIndex, setPageIndex] = useState(0)
     const [executionView, setExecutionView] = useState([])
     const [openSideMenuIndex, setOpenSideMenuIndex] = useState(null)
     const toggleSideMenuAt = i => setOpenSideMenuIndex(openSideMenuIndex === i ? null : i)
@@ -197,11 +196,11 @@ const LevelContainer = ({ afterExecute, ...props }) => {
     // }
     
     const onClickMissionButton = () => {
-        console.warn("TODO: click_dismiss_mission add timer to track number of seconds from mission open to close!");
         if (missionModal) {
-            logEvent("click_dismiss_mission")
+            logEvent("click_dismiss_mission", {time_open: secsSinceLast(TIMERS.MISSION)})
         } else {
             logEvent("click_level_mission")
+            logTime(TIMERS.MISSION)
         }
         setMissionModal(!missionModal)
     }
@@ -209,16 +208,14 @@ const LevelContainer = ({ afterExecute, ...props }) => {
     const onClickReplayButton = () => {
         // console.log("Replay level");
         logEvent("click_replay_level");
-        console.warn("TODO: dismiss_sequence_feedback, add timer for number of seconds feedback was open")
-        logEvent("dismiss_sequence_feedback")
+        logEvent("dismiss_sequence_feedback", {time_open: secsSinceLast(TIMERS.FEEDBACK)})
         restart();
     }
 
     const onClickNextLevelButton = () => {
         // console.log("Next level");
         logEvent("click_next_level")
-        console.warn("TODO: dismiss_sequence_feedback add timer for number of seconds feedback was open")
-        logEvent("dismiss_sequence_feedback")
+        logEvent("dismiss_sequence_feedback", {time_open: secsSinceLast(TIMERS.FEEDBACK)})
         goToSelectionPage()
     }
 
@@ -233,24 +230,24 @@ const LevelContainer = ({ afterExecute, ...props }) => {
 
     const toggleLegend = () => {
         if (openSideMenuIndex === 0) {
-            logEvent("dismiss_legend")
-            console.warn("TODO: dismiss_legend, add open duration timer")
+            logEvent("dismiss_legend", {time_open: secsSinceLast(TIMERS.LEGEND)})
         } else {
             logEvent("legend_displayed")
+            logTime(TIMERS.LEGEND)
         }
         toggleSideMenuAt(0)
     }
 
     const toggleObjective = () => {
         if (openSideMenuIndex === 1) {
-            logEvent("dismiss_objective")
-            console.warn("TODO: dismiss_legend, add open duration timer")
+            logEvent("dismiss_objective", {time_open: secsSinceLast(TIMERS.OBJECTIVES)})
         } else {
             logEvent("objectives_displayed", {
                 bronze_objective_text: levelModel.medalCriteria[0].description,
                 silver_objective_text: levelModel.medalCriteria[1].description,
                 gold_objective_text: levelModel.medalCriteria[2].description
             })
+            logTime(TIMERS.OBJECTIVES)
         }
         toggleSideMenuAt(1)
     }
@@ -268,13 +265,12 @@ const LevelContainer = ({ afterExecute, ...props }) => {
             const failTitle = "Out of Bounds!";
             const failText = levelModel.error.message;
             logEvent("sequence_fail_displayed", {outcome: "OUT_OF_BOUNDS", outcome_title: failTitle, outcome_text: failText,  moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals, collected_items: rewards})
-            
+            logTime(TIMERS.FEEDBACK);
             return <>
-                <div data-testid='level-error' className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Out of Bounds!</div>
-                <div className="mt-5 text-lg text-mineShaft mb-16 text-center">{levelModel.error.message}</div>
+                <div data-testid='level-error' className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>{failTitle}</div>
+                <div className="mt-5 text-lg text-mineShaft mb-16 text-center">{failText}</div>
                 <RestartButton onClick={() => {
-                    console.warn("TODO: dismiss_sequence_feedback add timer for number of seconds feedback was open")
-                    logEvent("dismiss_sequence_feedback")
+                    logEvent("dismiss_sequence_feedback", {time_open: secsSinceLast(TIMERS.FEEDBACK)})
                     restart();
                     }} />
             </>
@@ -283,12 +279,12 @@ const LevelContainer = ({ afterExecute, ...props }) => {
 
         if (levelModel.obstacleHit) {
             logEvent("sequence_fail_displayed", {outcome: 'COLLISION', outcome_title: 'Collision!', outcome_text: errors.hitObstacle, moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals})
+            logTime(TIMERS.FEEDBACK)  
             return <>
                 <div data-testid='obstacle-hit-modal' className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Collision!</div>
                 <div className="mt-5 text-lg text-mineShaft mb-16">{errors.hitObstacle}</div>
                 <RestartButton onClick={() => {
-                    console.warn("TODO: dismiss_sequence_feedback, timer for number of seconds feedback was open")
-                    logEvent("dismiss_sequence_feedback")
+                    logEvent("dismiss_sequence_feedback", {time_open: secsSinceLast(TIMERS.FEEDBACK)})
                     restart();
                     }} />
             </>
@@ -304,8 +300,8 @@ const LevelContainer = ({ afterExecute, ...props }) => {
                 stamp_points: levelModel.getStampScore()
             }
             logEvent("sequence_success_displayed", {outcome: levelModel.medal, outcome_title: wonTitle, outcome_text: wonDetail, moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals, collected_items: rewards})
-            // console.log("Level complete")
-            logEvent("level_complete")
+            logTime(TIMERS.FEEDBACK);
+            logEvent("level_complete");
             return <>
                 <div data-testid='won-modal' className='text-cerulean text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>{wonTitle}</div>
                 <Medal medal={shieldMap[levelModel.medal]} />
@@ -318,14 +314,17 @@ const LevelContainer = ({ afterExecute, ...props }) => {
         const failTitle = "Keep trying!";
         const failText = "You must achieve a Bronze medal in order to advance to the next level."
         logEvent("sequence_fail_displayed", {outcome: "FAILED_OBJECTIVE", outcome_title: failTitle, outcome_text: failText,  moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals, collected_items: rewards})
-        
+        logEvent("dismiss_sequence_feedback", {time_open: secsSinceLast(TIMERS.FEEDBACK)});
         return <>
             <div className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>{failTitle}</div>
             <div data-testid='not-won-modal' className="text-lg text-mineShaft text-center">You must achieve a Bronze<br />medal in order to advance<br />to the next level.</div>
             {levelModel.medalCriteria[0] && <div className="text-md my-2 py-2 px-4 bg-gallery text-mineShaft">
                 <div className='font-semibold inline'>BRONZE: </div> {levelModel.medalCriteria[0].description}
             </div>}
-            <RestartButton onClick={restart} />
+            <RestartButton onClick={() => {
+                logEvent("dismiss_sequence_feedback", {time_open: secsSinceLast(TIMERS.FEEDBACK)});
+                restart();
+            }} />
         </>
     })()
 

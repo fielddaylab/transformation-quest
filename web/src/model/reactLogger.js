@@ -52,6 +52,14 @@ class GameState {
 }
 
 let logger = new ReactOGDLogger()
+const dataTimers = {};
+
+export const TIMERS = {
+    FEEDBACK: 'FEEDBACK',
+    OBJECTIVES: 'OBJECTIVES',
+    LEGEND: 'LEGEND',
+    MISSION: 'MISSION'
+}
 
 export function setLogger(newLogger) {
     logger = newLogger;
@@ -64,4 +72,13 @@ export function logEvent(eventName, eventDetail) {
     } else {
         console.warn("logger not initialized")
     }
+}
+
+export function logTime(timerName) {
+    dataTimers[timerName] = Date.now();
+}
+
+export function secsSinceLast(timerName) {
+    if (!dataTimers[timerName]) return 0;
+    return (Date.now() - dataTimers[timerName])/1000;
 }

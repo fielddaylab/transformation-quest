@@ -18,7 +18,7 @@ import HtpNormal3 from '../assets/how-to-play/normal-3.png'
 import HtpCreative1 from '../assets/how-to-play/creative-1.png'
 import HtpCreative2 from '../assets/how-to-play/creative-2.png'
 
-import { logEvent } from '../model/reactLogger'
+import { TIMERS, logEvent, logTime, secsSinceLast } from '../model/reactLogger'
 import { Frame } from "framer"
 import { getReactElementText } from './introduction'
 
@@ -247,6 +247,7 @@ export const MissionModal = ({ children, onClose, className = '', creative, stor
 
   const onClickPlay = () => {
     logEvent("click_level_play")
+    logEvent("click_dismiss_mission", {time_open: secsSinceLast(TIMERS.MISSION)})
     onClose(null);
   }
 
@@ -260,6 +261,7 @@ export const MissionModal = ({ children, onClose, className = '', creative, stor
 
   if (!howToPlayPage) {
     logEvent("level_mission_displayed", {mission_text: storyText})
+    logTime(TIMERS.MISSION)
   }
 
   return howToPlayPage || // if a howToPlayPage is set, use that, otherwise use this
