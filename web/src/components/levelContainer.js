@@ -252,6 +252,8 @@ const LevelContainer = ({ afterExecute, ...props }) => {
         toggleSideMenuAt(1)
     }
 
+
+    // TODO: KNOWN BUG! This gets called twice when drawing the level (line 337) - once to check if it exists and again to draw it. This creates a duplicate event.
     const completedContent = (() => {
         if (!levelModel.complete) return null
 
