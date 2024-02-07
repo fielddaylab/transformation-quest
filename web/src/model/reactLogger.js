@@ -9,7 +9,6 @@ export class ReactOGDLogger {
         this.ogdLogger = new OGDLogger("transformation_quest", "0.10")
         // this.ogdLogger.useFirebase(FirebaseConsts)
         this.ogdLogger.setDebug(isDev)
-        this.ogdLogger.setSettings(this.ogdLogger._settings | ~SettingsFlags.Base64Encode)
     }
 
     /**

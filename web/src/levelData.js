@@ -77,7 +77,7 @@ export const level1 = {
 
 export const level2 = {
   id: 'alpha-0.2',
-  title: '“Creative”- Horizontal and vertical translations',
+  title: '"Creative"- Horizontal and vertical translations',
   description: 'Get at least 10 points with the fewest number of blocks!',
   creative: true,
   playerToken: new Polygon([{ x: -9, y: 3 }, { x: -9, y: 5 }, { x: -6, y: 3 }]),
@@ -240,7 +240,7 @@ export const level4 = {
 
 export const level5 = {
   id: 'alpha-0.5',
-  title: '“Creative”- Reflections and translations',
+  title: '"Creative"- Reflections and translations',
   description: 'Get at least 10 points with the fewest number of blocks!',
   creative: true,
   playerToken: new Polygon(stampGenerator({ x: -3, y: -6 })),
@@ -429,7 +429,7 @@ export const level7 = {
 
 export const level8 = {
   id: 'beta-0.8',
-  title: '“Creative”- Rotations, reflections, and translations',
+  title: '"Creative"- Rotations, reflections, and translations',
   description: 'Get at least 10 points with the fewest number of blocks!',
   creative: true,
   playerToken: new Polygon(stampHelper({ x: 0, y: 10 })),
@@ -628,7 +628,7 @@ export const level10 = {
 
 export const level11 = {
   id: 'beta-0.11',
-  title: '“Creative”- All transformations',
+  title: '"Creative"- All transformations',
   description: 'Get at least 10 points with the fewest number of blocks!',
   creative: true,
   playerToken: new Polygon([{ x: 7, y: 1 }, { x: 7, y: 3 }, { x: 4, y: 3 }]),
