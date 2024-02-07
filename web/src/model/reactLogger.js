@@ -1,5 +1,4 @@
 import { OGDLogger } from 'opengamedata-js-log'
-import { SettingsFlags } from 'opengamedata-js-log/src/OGDLogger'
 // import { FirebaseConsts } from "./FBConfig";
 
 const isDev = process.env.REACT_APP_DEV
