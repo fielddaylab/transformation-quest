@@ -20,6 +20,7 @@ export class ReactOGDLogger {
             console.log("[OpenGameData] Would log event: " + eventName);
             console.log(eventDetail)
             //console.log(this.ogdLogger._gameState)
+            // this.ogdLogger.log(eventName, eventDetail)
         } else {
             this.ogdLogger.log(eventName, eventDetail)
         }
@@ -47,7 +48,7 @@ export class ReactOGDLogger {
     }
 }
 
-let logger = new ReactOGDLogger()
+var logger;
 const dataTimers = {};
 
 export const TIMERS = {
@@ -58,6 +59,9 @@ export const TIMERS = {
 }
 
 export function setLogger(newLogger) {
+    if (logger) {
+        console.warn("[OpenGameData] Logger already initialized! Skipping setLogger...")
+    }
     logger = newLogger;
     return logger;
 }
@@ -84,5 +88,5 @@ export function logTime(timerName) {
 
 export function secsSinceLast(timerName) {
     if (!dataTimers[timerName]) return 0;
-    return (Date.now() - dataTimers[timerName])/1000;
+    return (Date.now() - dataTimers[timerName])/1000
 }

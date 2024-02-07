@@ -343,7 +343,7 @@ const LevelContainer = ({ afterExecute, ...props }) => {
             }} />
         </>
     })()
-    console.log("[OGD] LevelContainer called?");
+    
     return <div className='flex relative overflow-hidden' style={{ minHeight: '100vh', backgroundColor: '#576b91' }}>
 
         {/* Used in test */ levelModel.won && <div data-testid="win-msg" className="mt-5 text-red-600" hidden>Level Complete!</div>}

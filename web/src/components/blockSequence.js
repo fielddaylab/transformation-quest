@@ -122,7 +122,6 @@ const BlockSequence = ({ blocks, focusLoop, reorderInstructions, executeInstruct
 
   function reorderInstructionArray(blocks, moveFrom, moveTo, inLoop) {
     const [removed] = blocks.splice(moveFrom, 1)
-    console.log(removed);
     logEvent("drag_block", {"from_index": moveFrom, "new_index": moveTo, "in_loop": inLoop, "loop_id": undefined, "block_type": removed.type, "block_params": removed.paramMap})
     logEvent("sequence_updated", {'sequence_elements': getSequenceData(blocks)})
     blocks.splice(moveTo, 0, removed)
