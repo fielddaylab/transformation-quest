@@ -1,4 +1,5 @@
 import { OGDLogger } from 'opengamedata-js-log'
+import { SettingsFlags } from 'opengamedata-js-log/src/OGDLogger'
 // import { FirebaseConsts } from "./FBConfig";
 
 const isDev = process.env.REACT_APP_DEV
@@ -8,6 +9,7 @@ export class ReactOGDLogger {
         this.ogdLogger = new OGDLogger("transformation_quest", "0.10")
         // this.ogdLogger.useFirebase(FirebaseConsts)
         this.ogdLogger.setDebug(isDev)
+        this.ogdLogger.setSettings(this.ogdLogger._settings | ~SettingsFlags.Base64Encode)
     }
 
     /**

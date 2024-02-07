@@ -42,7 +42,7 @@
     "build-local-windows": "set REACT_APP_DEV=true REACT_APP_SUBDIR='/' REACT_APP_DATA_COLLECTION_BASE_URL=http://localhost:3000 && npm run build:css && react-scripts build && xcopy .\\build\\* ..\\server\\game-web /e /y && serve build",
     "build-ucalgary": "export REACT_APP_DEV=true REACT_APP_DATA_COLLECTION_BASE_URL=https://mathgame.ucalgary.ca && npm run build:css && react-scripts build && cp -r build/* ../server/game-web",
     "build-ucalgary-qa": "export REACT_APP_DEV=true REACT_APP_DATA_COLLECTION_BASE_URL=http://Transformations-env.eba-uapif8yq.us-west-2.elasticbeanstalk.com && npm run build:css && react-scripts build && cp -r build/* ../server/game-web",
-    "build-fieldday-develop": "export REACT_APP_SUBDIR='/' PUBLIC_URL=https://fielddaylab.wisc.edu/play/transformation-quest/ci/develop/ && npm run build:css && react-scripts build",
+    "build-fieldday-develop": "export REACT_APP_SUBDIR='/play/transformation-quest/ci/develop/' PUBLIC_URL=https://fielddaylab.wisc.edu/play/transformation-quest/ci/develop/ && npm run build:css && react-scripts build",
     "watch": "npm-watch",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
