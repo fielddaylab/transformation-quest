@@ -7,7 +7,7 @@ import monster2 from '../assets/Monster2.svg'
 import monster3 from '../assets/Monster3.svg'
 import monster4 from '../assets/Monster4.svg'
 import { IntroductionButton } from './uiComponents'
-import { logEvent, updateState } from "../model/reactLogger"
+import { logEvent } from "../model/reactLogger"
 
 const textMap = [
     <>You have been selected to save the <span className='text-highlight'>Planet of Adanac</span>, which has recently come under attack by invaders from the Planet Smreg.<br></br> <br></br>

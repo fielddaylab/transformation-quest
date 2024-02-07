@@ -105,7 +105,7 @@ const LevelContainer = ({ afterExecute, ...props }) => {
     const nextModelView = models => {
         if (models.length) {
             if (models.length === 1 && afterExecute) afterExecute(models[0])
-            let newModel = models[0]
+            const newModel = models[0]
             setLevelModel(newModel)
             logEvent("sequence_execution_step", {
                 'type': newModel.stepType, 
@@ -188,7 +188,7 @@ const LevelContainer = ({ afterExecute, ...props }) => {
             inLoop = true;
             setLevelModel(new LevelModel({ ...newModel}))
         }
-        updateState({sequence_block_count: newModel.numberOfBlocksUsed}) // levelModel hasn't updated yet, preemptively subtract
+        updateState({level: newModel.number, level_shields: [...newModel.acquiredMedals] ,sequence_block_count: newModel.numberOfBlocksUsed})
         logEvent("delete_block", {"block_index": blockIndex, "in_loop": inLoop, "block_type": rBlock.type, "block_params": rBlock.paramMap})
         logEvent("sequence_updated", {'sequence_elements': getSequenceData(blocks)})
     }
@@ -255,7 +255,6 @@ const LevelContainer = ({ afterExecute, ...props }) => {
     }
 
 
-    // TODO: KNOWN BUG! This gets called twice when drawing the level (line 337) - once to check if it exists and again to draw it. This creates a duplicate event.
     const completedContent = (() => {
         if (!levelModel.complete) return null
 
@@ -268,8 +267,11 @@ const LevelContainer = ({ afterExecute, ...props }) => {
         if (levelModel.error) {
             const failTitle = "Out of Bounds!";
             const failText = levelModel.error.message;
-            logEvent("sequence_fail_displayed", {outcome: "OUT_OF_BOUNDS", outcome_title: failTitle, outcome_text: failText,  moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals, collected_items: rewards})
-            logTime(TIMERS.FEEDBACK);
+            if (!levelModel.loggedComplete) {
+                logEvent("sequence_fail_displayed", {outcome: "OUT_OF_BOUNDS", outcome_title: failTitle, outcome_text: failText,  moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals, collected_items: rewards})
+                logTime(TIMERS.FEEDBACK);
+                levelModel.loggedComplete = true;
+            }
             return <>
                 <div data-testid='level-error' className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>{failTitle}</div>
                 <div className="mt-5 text-lg text-mineShaft mb-16 text-center">{failText}</div>
@@ -282,8 +284,11 @@ const LevelContainer = ({ afterExecute, ...props }) => {
 
 
         if (levelModel.obstacleHit) {
-            logEvent("sequence_fail_displayed", {outcome: 'COLLISION', outcome_title: 'Collision!', outcome_text: errors.hitObstacle, moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals})
-            logTime(TIMERS.FEEDBACK)  
+            if (!levelModel.loggedComplete) {
+                logEvent("sequence_fail_displayed", {outcome: 'COLLISION', outcome_title: 'Collision!', outcome_text: errors.hitObstacle, moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals})
+                logTime(TIMERS.FEEDBACK)  
+                levelModel.loggedComplete = true;
+            }
             return <>
                 <div data-testid='obstacle-hit-modal' className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>Collision!</div>
                 <div className="mt-5 text-lg text-mineShaft mb-16">{errors.hitObstacle}</div>
@@ -303,10 +308,13 @@ const LevelContainer = ({ afterExecute, ...props }) => {
                 yellow_gems: levelModel.numberOfGemsCollected(REWARDS.yellow),
                 stamp_points: levelModel.getStampScore()
             }
-            updateState({level_shields: [...levelModel.acquiredMedals]})
-            logEvent("sequence_success_displayed", {outcome: levelModel.medal, outcome_title: wonTitle, outcome_text: wonDetail, moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals, collected_items: rewards})
-            logTime(TIMERS.FEEDBACK);
-            logEvent("level_complete");
+            if (!levelModel.loggedComplete) {
+                updateState({level_shields: [...levelModel.acquiredMedals]})
+                logEvent("sequence_success_displayed", {outcome: levelModel.medal, outcome_title: wonTitle, outcome_text: wonDetail, moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals, collected_items: rewards})
+                logTime(TIMERS.FEEDBACK);
+                logEvent("level_complete");
+                levelModel.loggedComplete = true;
+            }
             return <>
                 <div data-testid='won-modal' className='text-cerulean text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>{wonTitle}</div>
                 <Medal medal={shieldMap[levelModel.medal]} />
@@ -318,8 +326,11 @@ const LevelContainer = ({ afterExecute, ...props }) => {
 
         const failTitle = "Keep trying!";
         const failText = "You must achieve a Bronze medal in order to advance to the next level."
-        logEvent("sequence_fail_displayed", {outcome: "FAILED_OBJECTIVE", outcome_title: failTitle, outcome_text: failText,  moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals, collected_items: rewards})
-        logEvent("dismiss_sequence_feedback", {time_open: secsSinceLast(TIMERS.FEEDBACK)});
+        if (!levelModel.loggedComplete) {
+            logEvent("sequence_fail_displayed", {outcome: "FAILED_OBJECTIVE", outcome_title: failTitle, outcome_text: failText,  moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals, collected_items: rewards})
+            logTime(TIMERS.FEEDBACK);
+            levelModel.loggedComplete = true;
+        }
         return <>
             <div className='text-carnation text-3xl' style={{ fontFamily: 'Luckiest Guy' }}>{failTitle}</div>
             <div data-testid='not-won-modal' className="text-lg text-mineShaft text-center">You must achieve a Bronze<br />medal in order to advance<br />to the next level.</div>
@@ -332,7 +343,7 @@ const LevelContainer = ({ afterExecute, ...props }) => {
             }} />
         </>
     })()
-
+    console.log("[OGD] LevelContainer called?");
     return <div className='flex relative overflow-hidden' style={{ minHeight: '100vh', backgroundColor: '#576b91' }}>
 
         {/* Used in test */ levelModel.won && <div data-testid="win-msg" className="mt-5 text-red-600" hidden>Level Complete!</div>}

@@ -107,6 +107,7 @@ export default class LevelModel {
         this.medalCriteria = obj.medalCriteria || []
         this.acquiredMedals = obj.acquiredMedals || []
         this.complete = obj.complete || this.obstacleHit || this.error
+        this.loggedComplete = obj.loggedComplete || false;
         this.numberOfBlocksUsed = this.blockQueue.queue.reduce((count, block) => count + (block.type === BLOCK_TYPES.repeat ? (block.blockQueue.queue.length + 1) : 1), 0)
         if (this.medalCriteria && this.won) {
             const medalMatch = _.findLast(this.medalCriteria, medalCriteria => medalCriteria.attained(this))
@@ -147,7 +148,7 @@ export default class LevelModel {
             blockIndex = blockQueue.queue.indexOf(block)
         }
 
-        updateState({sequence_block_count: this.numberOfBlocksUsed}) 
+        updateState({sequence_block_count: this.numberOfBlocksUsed + 1}) 
         logEvent("add_new_block", {"block_index": blockIndex, "in_loop": inLoop, "block_type": block.type, "block_params": block.paramMap})
         logEvent("sequence_updated", {'sequence_elements': getSequenceData(blockQueue.queue)})
         return new LevelModel({ ...this, blockQueue, editLoop: block.type === BLOCK_TYPES.repeat ? block : this.editLoop })
