@@ -6,7 +6,7 @@ import { ResumeButton } from "./uiComponents"
 import StartScreen from "../assets/startScreen.svg"
 import { loadDataCollectionSession, startDataCollectionSession } from "../model/dataCollectionApi"
 import BackArrow from '../assets/backArrow.svg'
-import { logEvent } from "../model/reactLogger"
+import { logEvent, updateState } from "../model/reactLogger"
 
 const Title = ({ levelProgression, setLevelProgression}) => {
     let history = useHistory()
@@ -42,6 +42,7 @@ const Title = ({ levelProgression, setLevelProgression}) => {
 
     const startGame = () => {
         startDataCollectionSession()
+        updateState({level: null, level_shields: [], sequence_block_count: 0})
         logEvent("begin_game")
         history.push('/introduction')
     }

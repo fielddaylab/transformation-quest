@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useHistory } from "react-router-dom"
 
 import {getSessionId} from "../model/dataCollectionApi"
-import { logEvent } from '../model/reactLogger'
+import { logEvent, updateState } from '../model/reactLogger'
 
 import BronzeShield from '../assets/bronzeShield.svg'
 import SilverShield from '../assets/silverShield.svg'
@@ -74,11 +74,14 @@ const LevelSelector = ({ levelProgression }) => {
   if(gameComplete) levelProgression.hasCompletedGame = true
   let sessionId = getSessionId()
 
+  updateState({level: null, level_shields: [], sequence_block_count: 0})
   logEvent("navigation_displayed", {'levels': levelProgression.levelData});
 
   const onClickLevel = (number, acquiredMedals) => {
     // console.log(levelProgression.levels);
+    updateState({level: number, level_shields: [...acquiredMedals]})
     logEvent("select_level", {level: number, level_shields: [...acquiredMedals]});
+
     history.push('/level/' + number)
   }
 

@@ -22,7 +22,7 @@ import { MissionButton, MissionModal, RestartButton, PlayAgainButton, AdvanceLev
 import { storyMap } from '../levelData'
 import { Frame } from "framer"
 import BackToMap from "../assets/backtoMap.svg"
-import { TIMERS, logEvent, logTime, secsSinceLast } from '../model/reactLogger'
+import { TIMERS, logEvent, logTime, secsSinceLast, updateState } from '../model/reactLogger'
 
 const shieldMap = {
     [MEDALS.bronze]: BronzeShield,
@@ -176,17 +176,19 @@ const LevelContainer = ({ afterExecute, ...props }) => {
 
         let editLoop = filterBlock(levelModel.editLoop) ? levelModel.editLoop : undefined
         let inLoop = false;
-
+        let newModel;
         if (blockIndex !== -1) {
             blocks = new BlockQueue(levelModel.blockQueue.queue.filter(filterBlock))
-            setLevelModel(new LevelModel({ ...levelModel, blockQueue: blocks, editLoop }))
+            newModel = new LevelModel({ ...levelModel, blockQueue: blocks, editLoop })
+            setLevelModel(newModel)
             blocks = blocks.queue
         }
         else {
-            const newModel = checkForLoopsContainingBlock(blocks)
+            newModel = checkForLoopsContainingBlock(blocks)
             inLoop = true;
             setLevelModel(new LevelModel({ ...newModel}))
         }
+        updateState({sequence_block_count: newModel.numberOfBlocksUsed}) // levelModel hasn't updated yet, preemptively subtract
         logEvent("delete_block", {"block_index": blockIndex, "in_loop": inLoop, "block_type": rBlock.type, "block_params": rBlock.paramMap})
         logEvent("sequence_updated", {'sequence_elements': getSequenceData(blocks)})
     }
@@ -301,6 +303,7 @@ const LevelContainer = ({ afterExecute, ...props }) => {
                 yellow_gems: levelModel.numberOfGemsCollected(REWARDS.yellow),
                 stamp_points: levelModel.getStampScore()
             }
+            updateState({level_shields: [...levelModel.acquiredMedals]})
             logEvent("sequence_success_displayed", {outcome: levelModel.medal, outcome_title: wonTitle, outcome_text: wonDetail, moves_count: levelModel.numberOfMoves, level_shields: levelModel.acquiredMedals, collected_items: rewards})
             logTime(TIMERS.FEEDBACK);
             logEvent("level_complete");
@@ -334,7 +337,7 @@ const LevelContainer = ({ afterExecute, ...props }) => {
 
         {/* Used in test */ levelModel.won && <div data-testid="win-msg" className="mt-5 text-red-600" hidden>Level Complete!</div>}
 
-        {completedContent && <Feedback style={{ fontFamily: 'sniglet' }}>{completedContent}</Feedback>}
+        {levelModel.complete && <Feedback style={{ fontFamily: 'sniglet' }}>{completedContent}</Feedback>}
 
         {(missionModal && storyText) && <MissionModal onClose={() => setMissionModal(false)} data-testid='mission-modal' creative={levelModel.creative} storyText={storyText}>
             <div className="flex flex-col items-center px-16 text-xl" style={{ whiteSpace: 'pre-line' }}>{storyText}</div>
@@ -402,7 +405,7 @@ const LevelContainer = ({ afterExecute, ...props }) => {
         >
             <button className='self-start my-2' data-testid='goto-level-select' onClick={onClickReturnButton}
                 style={{ backgroundImage: `url(${BackToMap})`, backgroundSize: '100% 100%', fontFamily: 'Sniglet', width: '129px', height: '27px' }} />
-            <MissionButton className={completedContent ? 'z-0' : 'z-40'} onClick={onClickMissionButton}>Mission</MissionButton>
+            <MissionButton className={levelModel.complete ? 'z-0' : 'z-40'} onClick={onClickMissionButton}>Mission</MissionButton>
             <h2 className="uppercase text-white text-2xl mb-2 mt-4" style={{ fontFamily: 'Sniglet' }}>Coding Blocks</h2>
             <CodingBlocks disabled={isExecuting} addBlock={addBlock} insideLoop={!!levelModel.editLoop} availableBlocks={levelModel.availableBlocks} />
         </div>
